@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.XiaomingAssistant" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.XiaomingAssistant" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+    <style name="ShapeAppearance.LargeComponent.TopRounded" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>
