@@ -8,11 +8,18 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-<!-- 底栏 莫兰蒂色系 -->
 
-    <color name="footer_background_gray">#D4D1CD</color>
-    <color name="footer_icon_gray">#656667</color>
+    <!-- 底栏 -->
+
+    <color name="footer_background_gray">#E5E2DE</color>
+    <color name="footer_icon_gray">#A9AAAB</color>
     <color name="footer_icon_black">#222222</color>
+
+
+    <!-- 登陆界面 -->
+
+    <color name="login_interface_theme_color">#DEE2E6</color>
+
 
 
 </resources>

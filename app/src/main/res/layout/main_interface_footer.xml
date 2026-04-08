@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
-        android:background="@color/white"
+        android:background="@color/footer_background_gray"
         android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
