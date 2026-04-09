@@ -8,6 +8,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.login_interface)
+        setContentView(R.layout.main_interface_skillstudy)
     }
 }
