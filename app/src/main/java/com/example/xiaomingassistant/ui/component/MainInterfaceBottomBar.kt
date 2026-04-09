@@ -12,6 +12,7 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    var onTabSelectedListener: ((Int) -> Unit)? = null
     private lateinit var tabList: List<LinearLayout>
 
     private fun updateState(selectedIndex: Int) {
@@ -37,6 +38,7 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
         tabList.forEachIndexed { index, layout ->
             layout.setOnClickListener {
                 updateState(index)
+                onTabSelectedListener?.invoke(index)
             }
         }
 
