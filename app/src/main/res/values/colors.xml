@@ -12,15 +12,25 @@
 
     <!-- 底栏 -->
 
-    <color name="footer_background_gray">#E5E2DE</color>
-    <color name="footer_icon_gray">#A9AAAB</color>
-    <color name="footer_icon_black">#222222</color>
+    <color name="footer_background_gray">#f8f8f8</color>
+    <color name="footer_icon_gray">#959595</color>
+    <color name="footer_icon_black">#111111</color>
 
 
     <!-- 登陆界面 -->
 
     <color name="login_interface_theme_color">#DEE2E6</color>
 
+    <!-- 主界面 -->
+
+    <color name="main_interface_background">#f7f7f7</color>
+    <color name="emerald_green">#B5C75F</color>
+    
+    <color name="card_darkbrown">#807E5B48</color>
+    <color name="card_lightbrown">#80EED4A5</color>
+
+    <color name="card_darkgreen">#809BA480</color>
+    <color name="card_lightgreen">#80E0E09D</color>
 
 
 </resources>
