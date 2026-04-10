@@ -24,6 +24,7 @@
     <!-- 主界面 -->
 
     <color name="main_interface_background">#f7f7f7</color>
+    <color name="main_interface_background_alpha50">#f7f7f7f7</color>
     <color name="emerald_green">#B5C75F</color>
     
     <color name="card_darkbrown">#807E5B48</color>

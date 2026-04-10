@@ -9,37 +9,39 @@ import com.example.xiaomingassistant.ui.fragment.mainactivity.LifeFragment
 import com.example.xiaomingassistant.ui.fragment.mainactivity.NotesFragment
 import com.example.xiaomingassistant.ui.fragment.mainactivity.SettingsFragment
 import com.example.xiaomingassistant.ui.fragment.mainactivity.SkillStudyFragment
+import com.example.xiaomingassistant.ui.adapter.ViewPagesAdapter
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_interface)
 
+
         val bottomBar = findViewById<MainInterfaceBottomBar>(R.id.main_bottom_bar)
+        val viewPager = findViewById<androidx.viewpager2.widget.ViewPager2>(R.id.main_view_pager)
 
-        // 默认显示第一个 Fragment
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, SkillStudyFragment())
-                .commit()
-        }
+        // 1. 设置 ViewPager 适配器
+        val adapter = ViewPagesAdapter(this)
+        viewPager.adapter = adapter
 
-// 绑定底栏的点击逻辑
+        // 设置预加载数量，防止滑动时 Fragment 被销毁重建（尤其是含有复杂绘图的 SkillStudy）
+        viewPager.offscreenPageLimit = 4
+
+        // 2. 底栏点击控制 ViewPager 切换
         bottomBar.onTabSelectedListener = { index ->
-            // 关键点：显式声明类型为 Fragment (注意首字母大写)
-            val fragment: androidx.fragment.app.Fragment = when (index) {
-                0 -> SkillStudyFragment()
-                1 -> NotesFragment()
-                2 -> AiFragment()
-                3 -> LifeFragment()
-                4 -> SettingsFragment()
-                else -> SkillStudyFragment()
-            }
-
-            supportFragmentManager.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.main_fragment_container, fragment)
-                .commit()
+            // second parameter 'false' means no smooth scroll animation
+            // 如果你想要滑动的动画，可以设为 true
+            viewPager.setCurrentItem(index, true)
         }
+
+        // 3. ViewPager 滑动控制底栏高亮
+        viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                // 假设你的 BottomBar 类里有一个方法可以手动设置选中的索引（不触发点击回调）
+                // 比如叫 setCurrentSelectedIndex(position)
+                bottomBar.setCurrentSelectedIndex(position)
+            }
+        })
     }
 }
