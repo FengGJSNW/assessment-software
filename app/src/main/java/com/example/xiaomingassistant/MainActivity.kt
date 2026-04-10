@@ -1,5 +1,6 @@
 package com.example.xiaomingassistant
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_interface)
-
 
         val bottomBar = findViewById<MainInterfaceBottomBar>(R.id.main_bottom_bar)
         val viewPager = findViewById<androidx.viewpager2.widget.ViewPager2>(R.id.main_view_pager)

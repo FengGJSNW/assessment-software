@@ -25,14 +25,15 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.main_interface_footer, this, true)
-        orientation = VERTICAL
         setBackgroundColor(Color.TRANSPARENT)
 
-        val blurBg = findViewById<View>(R.id.bottom_blur_bg)
+        // 在 MainInterfaceBottomBar 的 init 或 onAttachedToWindow 中
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val blurEffect = RenderEffect.createBlurEffect(20f, 20f, Shader.TileMode.MIRROR)
-            blurBg.setRenderEffect(blurEffect)
-            blurBg.setBackgroundColor(Color.parseColor("#80FFFFFF"))
+            // 找到 XML 里的那个背景 View: bottom_blur_bg
+            val blurBg = findViewById<View>(R.id.bottom_blur_bg)
+            blurBg.setRenderEffect(
+                RenderEffect.createBlurEffect(25f, 25f, Shader.TileMode.CLAMP)
+            )
         }
 
         tabList = listOf(
@@ -43,22 +44,27 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
             findViewById(R.id.footer_settings)
         )
 
+
+        /**
+         * 点击回调逻辑
+         */
         tabList.forEachIndexed { index, layout ->
             layout.setOnClickListener {
-                // 如果点击的就是当前已选中的，则不处理
                 if (currentSelectedIndex != index) {
-                    // 这里直接调用 updateState，由外部控制 ViewPager 切换
                     onTabSelectedListener?.invoke(index)
                 }
             }
         }
 
         setCurrentSelectedIndex(0) // 默认选中第一个
-    }
+
+    }// init 结束
 
     /**
-     * 核心方法：供外部（如 ViewPager2）调用，只更新 UI，不触发 Listener
+     * 滑动回调逻辑
      */
+
+    // 图标逻辑
     fun setCurrentSelectedIndex(index: Int) {
         if (index < 0 || index >= tabList.size) return
         currentSelectedIndex = index
@@ -67,12 +73,8 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
 
     private fun updateState(selectedIndex: Int) {
         tabList.forEachIndexed { index, layout ->
-            // 这里会改变 XML 中 selector 状态
+            // 图标变色
             layout.isSelected = (index == selectedIndex)
-
-            // 如果你没有写 selector XML，也可以在这里手动改颜色
-            // val icon = layout.getChildAt(0) as? ImageView
-            // icon?.setColorFilter(if (index == selectedIndex) Color.GREEN else Color.GRAY)
         }
     }
 }

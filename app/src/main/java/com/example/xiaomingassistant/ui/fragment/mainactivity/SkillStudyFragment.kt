@@ -14,6 +14,9 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.R
 import com.google.android.material.card.MaterialCardView
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 
 class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
@@ -65,6 +68,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
             if (endFade > startFade) {
                 val alpha = ((scrollY - startFade).toFloat() / (endFade - startFade)).coerceIn(0f, 1f)
                 topBarText.alpha = alpha
+                largeTitle.alpha = 1f - alpha
             }
         }
 
@@ -84,6 +88,38 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
             val smallHeight = (width - margin) / 2
             cardRightTop.updateLayoutParams { height = smallHeight }
             cardRightBottom.updateLayoutParams { height = smallHeight }
+        }
+
+
+
+        scrollView.setOnScrollChangeListener { _: NestedScrollView, _: Int, scrollY: Int, _: Int, _: Int ->
+            val startFade = largeTitle.top - currentTopBarHeight
+            val endFade = largeTitle.bottom - currentTopBarHeight
+
+            if (endFade > startFade) {
+                val progress = ((scrollY - startFade).toFloat() / (endFade - startFade)).coerceIn(0f, 1f)
+                topBarText.alpha = progress
+                largeTitle.alpha = 1f - progress
+
+                // --- 核心修复：添加高斯模糊 ---
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (progress > 0f) {
+                        // 根据滚动进度计算模糊半径，最大 20f 效果较好
+                        val blurRadius = progress * 20f
+                        topBarContainer.setRenderEffect(
+                            RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP)
+                        )
+                    } else {
+                        topBarContainer.setRenderEffect(null)
+                    }
+                }
+            } else {
+                topBarText.alpha = 0f
+                largeTitle.alpha = 1f
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    topBarContainer.setRenderEffect(null)
+                }
+            }
         }
     }
 
