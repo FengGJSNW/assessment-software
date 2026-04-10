@@ -16,6 +16,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 修正后的 RenderScript 配置 (Kotlin DSL 语法)
+        renderscriptTargetApi = 19
+        renderscriptSupportModeEnabled = true
     }
 
     buildTypes {
@@ -27,13 +31,16 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -50,7 +57,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     //    高斯模糊依赖
 
-    
+
+
     // Add missing dependencies
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)

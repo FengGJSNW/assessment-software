@@ -1,47 +1,82 @@
 package com.example.xiaomingassistant
 
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import com.example.xiaomingassistant.ui.component.MainInterfaceBottomBar
-import com.example.xiaomingassistant.ui.fragment.mainactivity.AiFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.LifeFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.NotesFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.SettingsFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.SkillStudyFragment
+import android.util.TypedValue
+import android.view.View
+import android.widget.LinearLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.viewpager2.widget.ViewPager2
 import com.example.xiaomingassistant.ui.adapter.ViewPagesAdapter
+import com.example.xiaomingassistant.ui.component.MainInterfaceBottomBar
+import com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
 
 class MainActivity : BaseActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.isAppearanceLightStatusBars = true
+
+        setContentView(R.layout.main_interface)
+
+
+        // 1. 开启真正的全屏沉浸式布局
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.main_interface)
 
         val bottomBar = findViewById<MainInterfaceBottomBar>(R.id.main_bottom_bar)
-        val viewPager = findViewById<androidx.viewpager2.widget.ViewPager2>(R.id.main_view_pager)
+        val viewPager = findViewById<ViewPager2>(R.id.main_view_pager)
+        // 关键：在这里寻找模糊 View
+        val bottomBlur = findViewById<RealtimeBlurView>(R.id.bottom_blur_view)
 
-        // 1. 设置 ViewPager 适配器
+        // 2. 设置 ViewPager 适配器
         val adapter = ViewPagesAdapter(this)
         viewPager.adapter = adapter
-
-        // 设置预加载数量，防止滑动时 Fragment 被销毁重建（尤其是含有复杂绘图的 SkillStudy）
         viewPager.offscreenPageLimit = 4
 
-        // 2. 底栏点击控制 ViewPager 切换
+        // 3. 联动逻辑：底栏控制 ViewPager
         bottomBar.onTabSelectedListener = { index ->
-            // second parameter 'false' means no smooth scroll animation
-            // 如果你想要滑动的动画，可以设为 true
             viewPager.setCurrentItem(index, true)
         }
 
-        // 3. ViewPager 滑动控制底栏高亮
-        viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+        // 4. 联动逻辑：ViewPager 控制底栏图标高亮
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                // 假设你的 BottomBar 类里有一个方法可以手动设置选中的索引（不触发点击回调）
-                // 比如叫 setCurrentSelectedIndex(position)
                 bottomBar.setCurrentSelectedIndex(position)
             }
         })
+
+        // 5. 沉浸式适配：处理底部系统导航栏
+        ViewCompat.setOnApplyWindowInsetsListener(bottomBar) { v, insets ->
+            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+            v.updateLayoutParams {
+                // 60dp 是你在 XML 中定义的基础高度
+                height = dpToPx(60f) + navInsets.bottom
+            }
+
+            val container = v.findViewById<LinearLayout>(R.id.bottom_nav_container)
+            container?.updatePadding(bottom = navInsets.bottom)
+
+            insets
+        }
+
+        // 6. 强制刷新模糊 View 的参数（放在 onCreate 内部）
+        bottomBlur?.post {
+            bottomBlur.setBlurRadius(dpToPx(5f).toFloat())
+            bottomBlur.invalidate() // 强行触发重绘抓取背景
+        }
     }
+
+    // 工具函数：将 dp 转为 px
+    private fun dpToPx(dp: Float): Int = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
+    ).toInt()
 }

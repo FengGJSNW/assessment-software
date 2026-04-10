@@ -1,11 +1,13 @@
 package com.example.xiaomingassistant.ui.fragment.mainactivity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -13,74 +15,53 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.R
+import com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
 import com.google.android.material.card.MaterialCardView
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
 
 class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
     private var lastScrollY = -1
     private var isSnapping = false
+    private var currentTopBarHeight = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. 初始化所有视图变量
+        // 1. 基础视图初始化
         val topBarContainer = view.findViewById<View>(R.id.top_bar_container)
+        val blurView = view.findViewById<RealtimeBlurView>(R.id.top_bar_blur_bg)
         val topBarText = view.findViewById<TextView>(R.id.skillstudy_topbar)
         val largeTitle = view.findViewById<TextView>(R.id.tv_main_large_title)
         val scrollView = view.findViewById<NestedScrollView>(R.id.skillstudy_scrollview)
         val contentContainer = view.findViewById<LinearLayout>(R.id.skillstudy_content_container)
 
+        // 2. 【核心修复】初始化所有卡片 ID
         val cardLeft = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_left)
         val cardRightTop = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_right_1)
         val cardRightBottom = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_right_2)
 
-        // 记录顶栏高度，供吸附逻辑使用
-        var currentTopBarHeight = 0
+        // 3. 沉浸式与内外边距适配
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
-        // 2. 处理状态栏与内边距
-        ViewCompat.setOnApplyWindowInsetsListener(topBarContainer) { v: View, insets: WindowInsetsCompat ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.setPadding(0, statusBar.top, 0, 0)
+            // 更新顶部高度
+            currentTopBarHeight = statusBarHeight + dpToPx(60f)
+            topBarContainer.updateLayoutParams { height = currentTopBarHeight }
+            topBarText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topMargin = statusBarHeight
+            }
 
-            val sixtyDpPx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                60f,
-                resources.displayMetrics
-            ).toInt()
-
-            currentTopBarHeight = statusBar.top + sixtyDpPx
-            v.updateLayoutParams { height = currentTopBarHeight }
-
-            // 初始 PaddingTop，避开顶栏
-            contentContainer.updatePadding(top = currentTopBarHeight + 20)
+            // 底部避让：系统导航栏 + 60dp底栏 + 20dp间距
+            scrollView.clipToPadding = false
+            contentContainer.updatePadding(
+                top = currentTopBarHeight + dpToPx(20f),
+                bottom = navBarHeight + dpToPx(80f)
+            )
             insets
         }
 
-        // 3. 标题淡入淡出逻辑
-        topBarText.alpha = 0f
-        scrollView.setOnScrollChangeListener { _: NestedScrollView, _: Int, scrollY: Int, _: Int, _: Int ->
-            val startFade = largeTitle.top - currentTopBarHeight
-            val endFade = largeTitle.bottom - currentTopBarHeight
-
-            if (endFade > startFade) {
-                val alpha = ((scrollY - startFade).toFloat() / (endFade - startFade)).coerceIn(0f, 1f)
-                topBarText.alpha = alpha
-                largeTitle.alpha = 1f - alpha
-            }
-        }
-
-        // 4. 吸附逻辑：监听触摸结束
-        scrollView.setOnTouchListener { _: View, event: MotionEvent ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                startSnapCheck(scrollView, largeTitle, currentTopBarHeight)
-            }
-            false
-        }
-
-        // 5. 卡片正方形适配
+        // 4. 【核心修复】卡片比例动态适配逻辑
         cardLeft.post {
             val width = cardLeft.width
             val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, resources.displayMetrics).toInt()
@@ -90,45 +71,51 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
             cardRightBottom.updateLayoutParams { height = smallHeight }
         }
 
-
-
+        // 5. 交互与滑动逻辑
+        topBarText.alpha = 0f
         scrollView.setOnScrollChangeListener { _: NestedScrollView, _: Int, scrollY: Int, _: Int, _: Int ->
             val startFade = largeTitle.top - currentTopBarHeight
             val endFade = largeTitle.bottom - currentTopBarHeight
+            handleTitleFade(scrollY, startFade, endFade, topBarText, largeTitle)
+            handleRealtimeBlur(scrollY, startFade, endFade, blurView)
+        }
 
-            if (endFade > startFade) {
-                val progress = ((scrollY - startFade).toFloat() / (endFade - startFade)).coerceIn(0f, 1f)
-                topBarText.alpha = progress
-                largeTitle.alpha = 1f - progress
-
-                // --- 核心修复：添加高斯模糊 ---
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (progress > 0f) {
-                        // 根据滚动进度计算模糊半径，最大 20f 效果较好
-                        val blurRadius = progress * 20f
-                        topBarContainer.setRenderEffect(
-                            RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP)
-                        )
-                    } else {
-                        topBarContainer.setRenderEffect(null)
-                    }
-                }
-            } else {
-                topBarText.alpha = 0f
-                largeTitle.alpha = 1f
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    topBarContainer.setRenderEffect(null)
-                }
+        scrollView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                handleSnap(scrollView, largeTitle)
+                v.performClick()
             }
+            false
         }
     }
 
-    private fun startSnapCheck(scrollView: NestedScrollView, title: View, topBarHeight: Int) {
+    // --- 私有辅助逻辑 ---
+
+    private fun handleTitleFade(scrollY: Int, start: Int, end: Int, barText: TextView, largeTitle: TextView) {
+        if (end <= start) return
+        val progress = ((scrollY - start).toFloat() / (end - start)).coerceIn(0f, 1f)
+        barText.alpha = progress
+        largeTitle.alpha = 1f - progress
+    }
+
+    private fun handleRealtimeBlur(scrollY: Int, start: Int, end: Int, blurView: RealtimeBlurView) {
+        if (scrollY > start && end > start) {
+            val progress = ((scrollY - start).toFloat() / (end - start)).coerceIn(0f, 1f)
+            blurView.setBlurRadius(dpToPx(progress * 20f).toFloat())
+            val alpha = (progress * 153).toInt()
+            blurView.setOverlayColor(Color.argb(alpha, 255, 255, 255))
+        } else {
+            blurView.setBlurRadius(0f)
+            blurView.setOverlayColor(Color.TRANSPARENT)
+        }
+    }
+
+    private fun handleSnap(scrollView: NestedScrollView, title: View) {
         scrollView.postDelayed(object : Runnable {
             override fun run() {
                 val currentY = scrollView.scrollY
                 if (lastScrollY == currentY) {
-                    performSnap(scrollView, title, topBarHeight)
+                    executeSnapAction(scrollView, title)
                 } else {
                     lastScrollY = currentY
                     scrollView.postDelayed(this, 50)
@@ -137,29 +124,23 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         }, 50)
     }
 
-    private fun performSnap(scrollView: NestedScrollView, title: View, topBarHeight: Int) {
+    private fun executeSnapAction(scrollView: NestedScrollView, title: View) {
         if (isSnapping) return
-
         val scrollY = scrollView.scrollY
-        val titleTop = title.top
-        val titleBottom = title.bottom
-
-        val titleRelativeTop = titleTop - scrollY
-        val titleRelativeBottom = titleBottom - scrollY
-
-        // 只有当大标题正在穿过顶栏边缘时才触发
-        if (titleRelativeTop < topBarHeight && titleRelativeBottom > topBarHeight) {
-            val titleHeight = title.height
-            val coveredHeight = topBarHeight - titleRelativeTop
-            val ratio = coveredHeight.toFloat() / titleHeight
-
+        val titleRelTop = title.top - scrollY
+        if (titleRelTop < currentTopBarHeight && (title.bottom - scrollY) > currentTopBarHeight) {
             isSnapping = true
+            val ratio = (currentTopBarHeight - titleRelTop).toFloat() / title.height
             if (ratio >= 0.5f) {
-                scrollView.smoothScrollTo(0, titleBottom - topBarHeight)
+                scrollView.smoothScrollTo(0, title.bottom - currentTopBarHeight)
             } else {
-                scrollView.smoothScrollTo(0, (titleTop - topBarHeight - 20).coerceAtLeast(0))
+                scrollView.smoothScrollTo(0, (title.top - currentTopBarHeight - dpToPx(20f)).coerceAtLeast(0))
             }
             scrollView.postDelayed({ isSnapping = false }, 500)
         }
     }
+
+    private fun dpToPx(dp: Float): Int = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
+    ).toInt()
 }
