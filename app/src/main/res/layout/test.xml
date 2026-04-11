@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_interface_background">
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/mode_switch"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:showText="false"
-        android:textOn=""
-        android:textOff=""
+        android:orientation="vertical">
 
-        app:trackTint="@color/card_darkgreen"
-        app:thumbTint="@android:color/white" />
+        <com.example.xiaomingassistant.ui.view.MySettingCard
+            android:id="@+id/settings_card_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:customImage="@drawable/personalized"
+            app:customMode="jump"
+            app:customTitle="权限"
+            app:customText="获取某些必要的权限" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

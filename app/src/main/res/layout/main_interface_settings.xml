@@ -37,7 +37,6 @@
 
             <!--个性化-->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/settings_card_group_personalized"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -56,64 +55,28 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:customImage="@drawable/personalized"
-                        app:customMode="slider"
-                        app:customText="自定义应用外观和主题"
-                        app:customTitle="个性化" />
+                        app:customMode="jump"
+                        app:customTitle="个性化"
+                        app:customText="自定义某些图片" />
 
                     <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_personalized1"
+                        android:id="@+id/settings_card_night"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:customImage="@drawable/personalized"
                         app:customMode="toggle"
-                        app:customText="自定义应用外观和主题"
-                        app:customTitle="个性化" />
+                        app:customTitle="夜间模式"
+                        app:customText="使用暗色防止在黑暗环境损害眼睛" />
 
                     <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_personalized2"
+                        android:id="@+id/settings_card_fontsize"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:customImage="@drawable/personalized"
-                        app:customMode="jump"
-                        app:customText="自定义应用外观和主题"
-                        app:customTitle="个性化" />
+                        app:customMode="slider"
+                        app:customTitle="文字大小"
+                        app:customText="滑动滑动条更改字体大小" />
 
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
-            <!--语言-->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/settings_card_language"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:text="语言"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingBottom="20dp" />
 
                 </LinearLayout>
 
@@ -121,7 +84,6 @@
 
             <!--权限-->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/settings_card_power"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -135,29 +97,21 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:text="权限"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <LinearLayout
+                    <com.example.xiaomingassistant.ui.view.MySettingCard
+                        android:id="@+id/settings_card_power"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingBottom="20dp" />
+                        app:customImage="@drawable/personalized"
+                        app:customMode="jump"
+                        app:customTitle="权限"
+                        app:customText="获取某些必要的权限" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!--登陆-->
+            <!--关于-->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/settings_card_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -171,29 +125,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:text="登陆"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <LinearLayout
+                    <com.example.xiaomingassistant.ui.view.MySettingCard
+                        android:id="@+id/settings_card_about"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingBottom="20dp" />
+                        app:customImage="@drawable/personalized"
+                        app:customMode="jump"
+                        app:customTitle="关于"
+                        app:customText="来看看作者吧" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!--日志-->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/settings_card_log"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -204,29 +149,14 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="1000dp"
                     android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:text="日志"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <LinearLayout
-                        android:id="@+id/task_list_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingBottom="20dp" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+
 
         </LinearLayout>
 
