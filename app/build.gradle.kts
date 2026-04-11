@@ -17,7 +17,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // 修正后的 RenderScript 配置 (Kotlin DSL 语法)
+        // 核心修复：开启 RenderScript 以支持高斯模糊库
         renderscriptTargetApi = 19
         renderscriptSupportModeEnabled = true
     }
@@ -31,16 +31,13 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
     kotlinOptions {
         jvmTarget = "11"
     }
-
     buildFeatures {
         compose = true
     }
@@ -55,11 +52,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    //    高斯模糊依赖
 
-
-
-    // Add missing dependencies
+    implementation("com.google.android.material:material:1.12.0")
+    
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
 
@@ -70,6 +65,4 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-
 }

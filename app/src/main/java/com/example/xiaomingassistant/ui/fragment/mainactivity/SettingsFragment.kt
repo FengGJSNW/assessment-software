@@ -8,5 +8,9 @@ import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.R
 import com.google.android.material.card.MaterialCardView
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(R.layout.main_interface_settings) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 }

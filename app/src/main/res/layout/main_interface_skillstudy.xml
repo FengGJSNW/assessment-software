@@ -21,26 +21,29 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
             android:paddingBottom="20dp"
-            tools:paddingTop="100dp"> <TextView
-            android:id="@+id/tv_main_large_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/harmonyos_sans_bold"
-            android:text="技能规划"
-            android:textColor="#333333"
-            android:textSize="36sp"
-            tools:ignore="HardcodedText" />
+            tools:paddingTop="100dp">
+
+            <TextView
+                android:id="@+id/tv_main_large_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/harmonyos_sans_bold"
+                android:text="技能规划"
+                android:textColor="#333333"
+                android:textSize="36sp"
+                tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!--随笔给的高度-->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/skillstudy_card_top_left"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="240dp"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
                     app:cardCornerRadius="24dp"
@@ -51,13 +54,15 @@
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:alpha="0.3"
+                            android:contentDescription="@null"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/desk"
-                            android:contentDescription="@null" />
+                            android:src="@drawable/desk" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -87,13 +92,14 @@
                         app:cardElevation="0dp"
                         app:strokeColor="@color/card_darkgreen"
                         app:strokeWidth="3dp">
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:alpha="0.2"
+                            android:contentDescription="@null"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/dog"
-                            android:contentDescription="@null" />
+                            android:src="@drawable/dog" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
@@ -106,36 +112,56 @@
                         app:cardElevation="0dp"
                         app:strokeColor="@color/card_darkgreen"
                         app:strokeWidth="3dp">
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:alpha="0.2"
+                            android:contentDescription="@null"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/dog2"
-                            android:contentDescription="@null" />
+                            android:src="@drawable/dog2" />
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </LinearLayout>
 
+<!--            今日计划展示页-->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/skillstudy_card_show_information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:minHeight="1000dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/card_darkgreen"
                 app:strokeWidth="3dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="今日计划"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1000dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp"
+                        android:text="今日计划"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText" />
+
+                    <LinearLayout
+                        android:id="@+id/task_list_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="20dp"
+                        android:paddingBottom="20dp" />
+
+                </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
+<!--            展示页末尾-->
+
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -152,12 +178,12 @@
             android:id="@+id/top_bar_blur_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:realtimeBlurRadius="0dp"
-            app:realtimeOverlayColor="#00FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:realtimeBlurRadius="0dp"
+            app:realtimeOverlayColor="#00FFFFFF" />
 
         <TextView
             android:id="@+id/skillstudy_topbar"

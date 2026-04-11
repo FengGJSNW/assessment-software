@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<declare-styleable name="RealtimeBlurView">
-		<attr name="realtimeBlurRadius" format="dimension"/>
-		<attr name="realtimeDownsampleFactor" format="float"/>
-		<attr name="realtimeOverlayColor" format="color"/>
-	</declare-styleable>
+    <declare-styleable name="RealtimeBlurView">
+        <attr name="realtimeBlurRadius" format="dimension" />
+        <attr name="realtimeDownsampleFactor" format="float" />
+        <attr name="realtimeOverlayColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="MySettingCard">
+        <attr name="customImage" format="reference" />
+        <attr name="customTitle" format="string" />
+        <attr name="customText" format="string" />
+
+        <attr name="customMode" format="enum">
+            <enum name="jump" value="0" />
+            <enum name="toggle" value="1" />
+            <enum name="slider" value="2" />
+        </attr>
+
+        <attr name="minLabel" format="string" />
+        <attr name="maxLabel" format="string" />
+    </declare-styleable>
 </resources>
