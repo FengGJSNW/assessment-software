@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/myview_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_interface_background">
+
+    <!-- 顶栏 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_bar_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
+            android:id="@+id/top_bar_blur_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:realtimeBlurRadius="0dp"
+            app:realtimeOverlayColor="#00FFFFFF" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 唯一标题：初始在顶栏外左下方，后续通过代码移动和缩放 -->
+    <TextView
+        android:id="@+id/floating_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="标题"
+        android:textColor="#333333"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/harmonyos_sans_bold"
+        android:elevation="11dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="技能规划" />
+
+    <!-- 滚动区 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/myview_scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/myview_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            tools:paddingTop="140dp">
+
+            <!-- 给悬浮大标题预留空间 -->
+            <View
+                android:id="@+id/title_spacer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+            <!-- 真正承载外部内容的容器 -->
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:id="@+id/content_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

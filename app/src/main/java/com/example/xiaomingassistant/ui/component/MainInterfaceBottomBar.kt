@@ -13,22 +13,19 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    var onTabSelectedListener: ((Int) -> Unit)? = null
-    private lateinit var tabList: List<LinearLayout>
-    private var currentSelectedIndex = -1
+
+    var onTabSelectedListener: ((Int) -> Unit)? = null // 页面切换接口
+    private lateinit var tabList: List<LinearLayout>   // 按钮List
+    private var currentSelectedIndex = 0               // 当前下标
 
     init {
-        // 1. 加载布局
         LayoutInflater.from(context).inflate(R.layout.main_interface_footer, this, true)
 
-        // 2. 确保自定义 View 本身是透明的
+        // 保证view透明
         setBackgroundColor(Color.TRANSPARENT)
         orientation = VERTICAL
 
-        // 3. 【修复：已删除】
-        // 不再在这里 findViewById(R.id.bottom_bar_bg)，因为该 View 已挪到外部 main_interface.xml
-
-        // 4. 初始化 Tab 列表
+        // 初始化 Tab 列表
         tabList = listOf(
             findViewById(R.id.footer_skill_study),
             findViewById(R.id.footer_notes),
@@ -39,6 +36,7 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
 
         tabList.forEachIndexed { index, layout ->
             layout.setOnClickListener {
+                // 向外传下标
                 if (currentSelectedIndex != index) {
                     onTabSelectedListener?.invoke(index)
                 }
@@ -48,16 +46,17 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
         setCurrentSelectedIndex(0)
     }
 
-    // 更新选中状态的逻辑保持不变
+    // 设置当前选中的项
     fun setCurrentSelectedIndex(index: Int) {
         if (index < 0 || index >= tabList.size) return
         currentSelectedIndex = index
         updateState(index)
     }
 
+    // 刷新tab的选中状态
     private fun updateState(selectedIndex: Int) {
-        tabList.forEachIndexed { index, layout ->
-            layout.isSelected = (index == selectedIndex)
-        }
+        tabList[currentSelectedIndex].isSelected = false
+        tabList[selectedIndex].isSelected = true
+        currentSelectedIndex = selectedIndex
     }
 }

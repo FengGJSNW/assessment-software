@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--    模糊组件-->
     <declare-styleable name="RealtimeBlurView">
         <attr name="realtimeBlurRadius" format="dimension" />
         <attr name="realtimeDownsampleFactor" format="float" />
         <attr name="realtimeOverlayColor" format="color" />
     </declare-styleable>
 
+    <!--设置Fragment的卡片内容-->
     <declare-styleable name="MySettingCard">
         <attr name="customImage" format="reference" />
         <attr name="customTitle" format="string" />
@@ -20,4 +23,12 @@
         <attr name="minLabel" format="string" />
         <attr name="maxLabel" format="string" />
     </declare-styleable>
+
+    <!--自定义顶栏加标题加滑动栏-->
+
+    <declare-styleable name="TopBarWithScrollView">
+        <attr name="titleText" format="string" />
+    </declare-styleable>
+
+
 </resources>

@@ -6,197 +6,134 @@
     android:layout_height="match_parent"
     android:background="@color/main_interface_background">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/skillstudy_scrollview"
+    <com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+        android:id="@+id/settings_topbar_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        app:titleText="设置www"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
-        <LinearLayout
-            android:id="@+id/skillstudy_content_container"
+        <!--个性化-->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="80dp">
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
 
-            <TextView
-                android:id="@+id/tv_main_large_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/harmonyos_sans_bold"
-                android:text="设置"
-                android:textColor="#333333"
-                android:textSize="36sp"
-                tools:ignore="HardcodedText" />
+                android:orientation="vertical">
 
-
-            <!--个性化-->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
-
-                <LinearLayout
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/settings_card_personalized"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    app:customImage="@drawable/personalized"
+                    app:customMode="jump"
+                    app:customText="自定义某些图片"
+                    app:customTitle="个性化" />
 
-                    <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_personalized"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
-                        app:customMode="jump"
-                        app:customTitle="个性化"
-                        app:customText="自定义某些图片" />
-
-                    <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_night"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
-                        app:customMode="toggle"
-                        app:customTitle="夜间模式"
-                        app:customText="使用暗色防止在黑暗环境损害眼睛" />
-
-                    <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_fontsize"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
-                        app:customMode="slider"
-                        app:customTitle="文字大小"
-                        app:customText="滑动滑动条更改字体大小" />
-
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!--权限-->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
-
-                <LinearLayout
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/settings_card_night"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    app:customImage="@drawable/personalized"
+                    app:customMode="toggle"
+                    app:customText="使用暗色防止在黑暗环境损害眼睛"
+                    app:customTitle="夜间模式" />
 
-                    <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_power"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
-                        app:customMode="jump"
-                        app:customTitle="权限"
-                        app:customText="获取某些必要的权限" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!--关于-->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
-
-                <LinearLayout
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/settings_card_fontsize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    app:customImage="@drawable/personalized"
+                    app:customMode="slider"
+                    app:customText="滑动滑动条更改字体大小"
+                    app:customTitle="文字大小" />
 
-                    <com.example.xiaomingassistant.ui.view.MySettingCard
-                        android:id="@+id/settings_card_about"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
-                        app:customMode="jump"
-                        app:customTitle="关于"
-                        app:customText="来看看作者吧" />
 
-                </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
+        <!--权限-->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/settings_card_power"
                     android:layout_width="match_parent"
-                    android:layout_height="1000dp"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    app:customImage="@drawable/personalized"
+                    app:customMode="jump"
+                    app:customText="获取某些必要的权限"
+                    app:customTitle="权限" />
 
-                </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
+        <!--关于-->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/settings_card_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:customImage="@drawable/personalized"
+                    app:customMode="jump"
+                    app:customText="来看看作者吧"
+                    app:customTitle="关于" />
 
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
 
+        </com.google.android.material.card.MaterialCardView>
 
-    <!--顶栏-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_bar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:elevation="10dp"
-        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
 
-        <com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
-            android:id="@+id/top_bar_blur_bg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:realtimeBlurRadius="20dp"
-            app:realtimeOverlayColor="#4DFFFFFF" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1000dp"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/skillstudy_topbar"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:gravity="center"
-            android:text="设置"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="HardcodedText" />
+            </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
