@@ -225,7 +225,8 @@ class TopBarWithScrollView @JvmOverloads constructor(
     }
 
     private fun updateBlur(progress: Float) {
-        blurView.setBlurRadius(dpToPx(progress * 20f).toFloat())
+        val blurRadius = resources.getDimension(R.dimen.global_blur_radius) * progress
+        blurView.setBlurRadius(blurRadius)
         val alpha = (progress * 153).toInt()
         blurView.setOverlayColor(Color.argb(alpha, 255, 255, 255))
     }
