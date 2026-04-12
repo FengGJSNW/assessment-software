@@ -10,7 +10,7 @@
         android:id="@+id/settings_topbar_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:titleText="设置www"
+        app:titleText="设置"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
