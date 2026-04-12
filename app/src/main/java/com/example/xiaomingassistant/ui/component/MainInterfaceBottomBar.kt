@@ -53,10 +53,10 @@ class MainInterfaceBottomBar @JvmOverloads constructor(
         updateState(index)
     }
 
-    // 刷新tab的选中状态
+    // 刷新每个 tab 的选中状态
     private fun updateState(selectedIndex: Int) {
-        tabList[currentSelectedIndex].isSelected = false
-        tabList[selectedIndex].isSelected = true
-        currentSelectedIndex = selectedIndex
+        tabList.forEachIndexed { index, layout ->
+            layout.isSelected = (index == selectedIndex)
+        }
     }
 }
