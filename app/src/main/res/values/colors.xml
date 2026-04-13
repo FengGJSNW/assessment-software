@@ -9,6 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_transparent">#66FFFFFF</color>
 
+    <!--    字体-->
+    <color name="text_blue">#3787FD</color>
+
 
     <!-- 底栏 -->
 
@@ -26,12 +29,18 @@
     <color name="main_interface_background">#f7f7f7</color>
     <color name="main_interface_background_alpha50">#f7f7f7f7</color>
     <color name="emerald_green">#B5C75F</color>
-    
+
     <color name="card_darkbrown">#807E5B48</color>
     <color name="card_lightbrown">#80EED4A5</color>
 
     <color name="card_darkgreen">#809BA480</color>
     <color name="card_lightgreen">#80E0E09D</color>
+
+    <!--    任务左边圆点-->
+
+    <color name="point_red">#FF5F57</color>
+    <color name="point_yellow">#FEBC2E</color>
+    <color name="point_green">#28C841</color>
 
 
 </resources>

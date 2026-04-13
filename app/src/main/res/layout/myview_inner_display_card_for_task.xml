@@ -7,19 +7,22 @@
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:weightSum="3"
+    android:weightSum="11"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
+    android:paddingHorizontal="10dp"
     android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    android:clickable="true"
+    android:focusable="true">
 
     <!-- 左侧区域：图标 + 时间，整体固定宽度，避免文字变化导致右侧抖动 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingStart="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="4">
 
         <ImageView
             android:id="@+id/internal_icon"
@@ -61,7 +64,7 @@
         android:id="@+id/internal_summary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="7"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"

@@ -127,11 +127,10 @@
 
 
                 <LinearLayout
-                    android:id="@+id/task_list_container"
+                    android:id="@+id/skillstudy_task_list_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="10dp"
                     android:paddingBottom="20dp" />
 
             </LinearLayout>

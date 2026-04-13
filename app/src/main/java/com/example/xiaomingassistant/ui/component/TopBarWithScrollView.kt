@@ -82,7 +82,7 @@ class TopBarWithScrollView @JvmOverloads constructor(
     private fun bindViews() {
         topBarContainer = findViewById(R.id.top_bar_container)
         blurView = findViewById(R.id.top_bar_blur_bg)
-        floatingTitle = findViewById(R.id.floating_title)
+        floatingTitle = findViewById(R.id.myview_floating_title)
         scrollView = findViewById(R.id.myview_scrollview)
         contentContainer = findViewById(R.id.myview_content_container)
         contentHost = findViewById(R.id.content_host)

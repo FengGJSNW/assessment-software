@@ -1,8 +1,10 @@
 package com.example.xiaomingassistant.ui.fragment.mainactivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.example.xiaomingassistant.LoginActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.ui.view.MySettingCard
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
@@ -17,6 +19,7 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
         val fontSizeCard = view.findViewById<MySettingCard>(R.id.settings_card_fontsize)
         val powerCard = view.findViewById<MySettingCard>(R.id.settings_card_power)
         val aboutCard = view.findViewById<MySettingCard>(R.id.settings_card_about)
+        val loginCard = view.findViewById<MySettingCard>(R.id.settings_card_login)
 
         // 示例：点击跳转类卡片
         personalizedCard.setOnClickListener {
@@ -29,6 +32,13 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
 
         aboutCard.setOnClickListener {
             // TODO: 打开关于页面
+        }
+
+        loginCard.setOnClickListener {
+            // TODO: 打开登陆界面
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+
         }
 
     }
