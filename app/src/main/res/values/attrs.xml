@@ -28,6 +28,9 @@
 
     <declare-styleable name="TopBarWithScrollView">
         <attr name="titleText" format="string" />
+        <attr name="titleColor" format="color" />
+        <attr name="topBarMixColorWith" format="color" />
+        <attr name="globalBackground" format="reference" />
     </declare-styleable>
 
 

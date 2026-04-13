@@ -37,10 +37,6 @@ class LoginActivity : BaseActivity() {
                 is UserRepository.LoginResult.Success -> {
                     sessionManager.saveLogin(result.user.id, result.user.username)
                     Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
-
-                    // 这里后面改成你的主页
-                    // startActivity(Intent(this, MainActivity::class.java))
-                    // finish()
                 }
                 UserRepository.LoginResult.UsernameEmpty -> {
                     Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()

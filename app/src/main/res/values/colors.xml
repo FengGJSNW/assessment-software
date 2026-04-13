@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_transparent">#66FFFFFF</color>
+    <color name="white_transparent_for_card">#22FFFFFF</color>
+
 
     <!--    字体-->
     <color name="text_blue">#3787FD</color>

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -44,7 +45,14 @@ class TopBarWithScrollView @JvmOverloads constructor(
     private var collapsedScale = 0.56f
 
     private var initialTitleText: String? = null
+    private var initialTitleColor: Int = Color.BLACK
+
+    private var mixColor: Int = Color.WHITE
     private var isSnapping = false
+    private lateinit var globalBackground: ImageView
+    private var initialBackgroundRes: Int = -1
+
+
 
     init {
         LayoutInflater.from(context).inflate(
@@ -62,7 +70,11 @@ class TopBarWithScrollView @JvmOverloads constructor(
             defStyleAttr,
             0
         )
+
         initialTitleText = ta.getString(R.styleable.TopBarWithScrollView_titleText)
+        initialTitleColor = ta.getColor(R.styleable.TopBarWithScrollView_titleColor, Color.BLACK)
+        mixColor = ta.getColor(R.styleable.TopBarWithScrollView_topBarMixColorWith, Color.WHITE)
+        initialBackgroundRes = ta.getResourceId(R.styleable.TopBarWithScrollView_globalBackground, -1)
         ta.recycle()
     }
 
@@ -87,13 +99,23 @@ class TopBarWithScrollView @JvmOverloads constructor(
         contentContainer = findViewById(R.id.myview_content_container)
         contentHost = findViewById(R.id.content_host)
         titleSpacer = findViewById(R.id.title_spacer)
+        globalBackground = findViewById(R.id.myview_global_background)
+
+        if (initialBackgroundRes != -1) {
+            globalBackground.setImageResource(initialBackgroundRes)
+        }
 
         initialTitleText?.let {
             floatingTitle.text = it
         }
 
+        floatingTitle.setTextColor(initialTitleColor)
         floatingTitle.isClickable = false
         floatingTitle.isFocusable = false
+    }
+
+    fun setGlobalBackground(resId: Int) {
+        globalBackground.setImageResource(resId)
     }
 
     private fun moveExternalChildrenToContentHost() {
@@ -110,6 +132,11 @@ class TopBarWithScrollView @JvmOverloads constructor(
             removeView(child)
             contentHost.addView(child)
         }
+    }
+
+    fun setTitleColor(color: Int) {
+        initialTitleColor = color
+        floatingTitle.setTextColor(color)
     }
 
     private fun setupInsets() {
@@ -227,8 +254,23 @@ class TopBarWithScrollView @JvmOverloads constructor(
     private fun updateBlur(progress: Float) {
         val blurRadius = resources.getDimension(R.dimen.global_blur_radius) * progress
         blurView.setBlurRadius(blurRadius)
-        val alpha = (progress * 153).toInt()
-        blurView.setOverlayColor(Color.argb(alpha, 255, 255, 255))
+
+        // 1. 获取 mixColor 的透明度通道
+        val baseAlpha = Color.alpha(mixColor)
+
+        // 2. 逻辑判断：如果 mixColor 本身就是全透明的，直接设置 Overlay 为全透明并退出
+        if (baseAlpha == 0) {
+            blurView.setOverlayColor(Color.TRANSPARENT)
+            return
+        }
+
+        // 3. 如果不是全透明，再执行颜色混合逻辑
+        val alpha = (progress * 153).toInt() // 这里可以根据需要微调最大透明度
+        val red = Color.red(mixColor)
+        val green = Color.green(mixColor)
+        val blue = Color.blue(mixColor)
+
+        blurView.setOverlayColor(Color.argb(alpha, red, green, blue))
     }
 
     fun setTitle(text: CharSequence) {

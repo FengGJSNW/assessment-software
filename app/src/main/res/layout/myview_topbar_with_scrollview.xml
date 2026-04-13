@@ -7,6 +7,12 @@
     android:layout_height="match_parent"
     android:background="@color/main_interface_background">
 
+    <ImageView
+        android:id="@+id/myview_global_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
     <!-- 顶栏 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar_container"

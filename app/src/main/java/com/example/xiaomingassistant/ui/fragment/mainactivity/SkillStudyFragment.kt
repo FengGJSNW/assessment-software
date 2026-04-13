@@ -8,7 +8,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import com.example.xiaomingassistant.R
-import com.example.xiaomingassistant.ui.view.TaskDisplayCardView
+import com.example.xiaomingassistant.ui.content_display.card.TaskDisplayCardView
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.card.MaterialCardView
 
