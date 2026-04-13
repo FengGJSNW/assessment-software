@@ -1,6 +1,7 @@
 package com.example.xiaomingassistant.ui.fragment.mainactivity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -32,7 +33,9 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
 
         aboutCard.setOnClickListener {
             // TODO: 打开关于页面
-
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("https://fenggjsnw.top/about")
+            startActivity(intent)
         }
 
         loginCard.setOnClickListener {

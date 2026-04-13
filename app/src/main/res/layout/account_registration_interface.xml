@@ -106,6 +106,7 @@
                         app:startIconTint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/register_text_account"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text" />
@@ -141,6 +142,7 @@
                         app:startIconTint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/register_text_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
@@ -176,6 +178,7 @@
                         app:startIconTint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/register_text_comfirm_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
@@ -188,7 +191,7 @@
                         android:layout_height="36dp" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnLogin"
+                        android:id="@+id/account_btn_register"
                         android:layout_width="match_parent"
                         android:layout_height="77dp"
                         android:backgroundTint="#000000"
