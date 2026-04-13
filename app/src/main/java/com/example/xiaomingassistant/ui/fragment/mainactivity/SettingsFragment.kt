@@ -32,13 +32,13 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
 
         aboutCard.setOnClickListener {
             // TODO: 打开关于页面
+
         }
 
         loginCard.setOnClickListener {
             // TODO: 打开登陆界面
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
-
         }
 
     }
