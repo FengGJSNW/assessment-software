@@ -20,6 +20,7 @@ android {
         // 核心修复：开启 RenderScript 以支持高斯模糊库
         renderscriptTargetApi = 19
         renderscriptSupportModeEnabled = true
+
     }
 
     buildTypes {
@@ -55,7 +56,7 @@ dependencies {
 
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.amap.api:location:latest.integration")
-    
+
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
 

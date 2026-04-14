@@ -22,6 +22,10 @@
 
         <attr name="minLabel" format="string" />
         <attr name="maxLabel" format="string" />
+
+        <attr name="bottomSpace" format="string" />
+
+        <attr name="backgroundImage" format="reference" />
     </declare-styleable>
 
     <!--自定义顶栏加标题加滑动栏-->
@@ -32,6 +36,5 @@
         <attr name="topBarMixColorWith" format="color" />
         <attr name="globalBackground" format="reference" />
     </declare-styleable>
-
 
 </resources>

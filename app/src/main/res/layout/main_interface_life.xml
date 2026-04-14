@@ -14,7 +14,7 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
-<!--        天气-->
+<!--天气-->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,8 +35,67 @@
                     android:layout_height="wrap_content"
                     app:customImage="@drawable/personalized"
                     app:customMode="jump"
-                    app:customText="调整天气详情页面"
-                    app:customTitle="天气" />
+                    app:customText="跳转天气详情页面"
+                    app:customTitle="天气"
+                    app:bottomSpace="30dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--喝水提醒小助手-->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/life_card_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:customImage="@drawable/personalized"
+                    app:customMode="jump"
+                    app:customText="提醒你喝水的得力小助手"
+                    app:customTitle="喝水提醒"
+                    app:bottomSpace="30dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--待定-->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.example.xiaomingassistant.ui.view.MySettingCard
+                    android:id="@+id/life_card_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:customImage="@drawable/personalized"
+                    app:customMode="jump"
+                    app:customText="summary"
+                    app:customTitle="title"
+                    app:bottomSpace="30dp" />
 
             </LinearLayout>
 
