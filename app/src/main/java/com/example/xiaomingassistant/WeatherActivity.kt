@@ -28,16 +28,18 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_interface_weather)
+        initViews()
+
+        // 全面屏适配
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.isAppearanceLightStatusBars = false
+
+        // 高德警告：确保调用SDK任何接口前先调用 updatePrivacyShow、updatePrivacyAgree
         AMapLocationClient.updatePrivacyShow(this, true, true)
         AMapLocationClient.updatePrivacyAgree(this, true)
 
-        setContentView(R.layout.main_interface_weather)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        controller.isAppearanceLightStatusBars = true
-
-        initViews()
         locationRepository = LocationRepository(this)
 
         requestLocationAndLoadWeather()
@@ -70,12 +72,14 @@ class WeatherActivity : AppCompatActivity() {
                 Log.d("LOC_FLOW", "result.district=${result.district}")
                 Log.d("LOC_FLOW", "result.address=${result.address}")
 
+                locationText.text = result.city + " " + result.district
+
                 weatherRepository.getWeather(result.city) { data ->
                     runOnUiThread {
                         if (data != null) {
                             val tempInt = data.temp.toDoubleOrNull()?.toInt() ?: 0
 
-                            locationText.text = data.city
+                            // locationText.text = data.city
                             degreeText.text = "${tempInt}°"
                             stateText.text = data.wea
                             maxDegreeText.text = "最高 ${data.max}°"

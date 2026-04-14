@@ -6,19 +6,12 @@ import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
+import com.example.xiaomingassistant.data.model.LocationResult
 
 class LocationRepository(context: Context) {
 
     private val appContext = context.applicationContext
     private var locationClient: AMapLocationClient? = null
-
-    data class LocationResult(
-        val city: String,
-        val district: String?,
-        val latitude: Double,
-        val longitude: Double,
-        val address: String?
-    )
 
     fun locateOnce(
         onSuccess: (LocationResult) -> Unit,

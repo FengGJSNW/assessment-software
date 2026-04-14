@@ -9,6 +9,7 @@ import java.net.URLEncoder
 
 class WeatherRepository {
 
+    // 获取天气
     fun getWeather(
         city: String? = null,
         callback: (WeatherData?) -> Unit
@@ -16,6 +17,7 @@ class WeatherRepository {
         Thread {
             var connection: HttpURLConnection? = null
             try {
+                // api对接网站拼接
                 val baseUrl = StringBuilder(
                     "http://pddfps.tianqiapi.com/api" +
                             "?unescape=1" +
