@@ -1,8 +1,6 @@
 package com.example.xiaomingassistant
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.example.xiaomingassistant.data.repository.UserRepository

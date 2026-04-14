@@ -11,7 +11,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.LoginActivity
 import com.example.xiaomingassistant.R
-import com.example.xiaomingassistant.ui.activity.WeatherActivity
+import com.example.xiaomingassistant.WeatherActivity
 import com.example.xiaomingassistant.ui.view.MySettingCard
 
 class LifeFragment : Fragment(R.layout.main_interface_life) {

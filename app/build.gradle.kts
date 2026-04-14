@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation("com.google.android.material:material:1.12.0")
+    implementation("com.amap.api:location:latest.integration")
     
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
