@@ -1,5 +1,6 @@
-package com.example.xiaomingassistant.ui.fragment.mainactivity
+package com.example.xiaomingassistant.ui.fragment.main_activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
@@ -7,6 +8,8 @@ import android.widget.LinearLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
+import com.example.xiaomingassistant.LoginActivity
+import com.example.xiaomingassistant.PlanEditingActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.ui.content_display.card.TaskDisplayCardView
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
@@ -17,17 +20,12 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val topBarWithScrollView =
-            view.findViewById<TopBarWithScrollView>(R.id.skillstudy_topbar_container)
-
-        topBarWithScrollView.setTitle("技能规划")
-
         val cardLeft = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_left)
         val cardRightTop = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_right_1)
         val cardRightBottom = view.findViewById<MaterialCardView>(R.id.skillstudy_card_top_right_2)
-
         val cardDisplayTask = view.findViewById<LinearLayout>(R.id.skillstudy_task_list_container)
 
+        // 卡片高度适配
         cardLeft.post {
             val width = cardLeft.width
             val margin = TypedValue.applyDimension(
@@ -49,6 +47,15 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
             }
         }
 
+        // 卡片事件绑定
+        cardLeft.setOnClickListener {
+            // TODO: 打开编辑任务界面
+            val intent = Intent(requireContext(), PlanEditingActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        // 任务卡片添加
         val taskTestList = arrayOf(
             TaskTestData(R.color.point_red, "09:00", "10:30", "这里是任务内容1"),
             TaskTestData(R.color.point_yellow, "10:40", "11:20", "这里是任务内容2"),

@@ -18,7 +18,6 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/card_darkgreen"
@@ -29,14 +28,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+
                 <com.example.xiaomingassistant.ui.view.MySettingCard
                     android:id="@+id/life_card_weather"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:customImage="@drawable/personalized"
+                    app:backgroundImage="@drawable/setting_background"
                     app:customMode="jump"
                     app:customText="跳转天气详情页面"
                     app:customTitle="天气"
+                    app:titleColor="@color/white_alpha90"
+                    app:summaryColor="@color/white_alpha80"
+                    app:iconTintColor="@color/white_alpha90"
+                    app:backgroundAlpha="0.9"
                     app:bottomSpace="30dp" />
 
             </LinearLayout>
@@ -59,7 +64,7 @@
                 android:orientation="vertical">
 
                 <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/life_card_weather"
+                    android:id="@+id/life_card_drink_assistant"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:customImage="@drawable/personalized"
@@ -88,7 +93,7 @@
                 android:orientation="vertical">
 
                 <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/life_card_weather"
+                    android:id="@+id/life_card_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:customImage="@drawable/personalized"

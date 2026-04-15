@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/main_interface_background">
 
     <com.example.xiaomingassistant.ui.view.TopBarWithScrollView
@@ -26,29 +26,45 @@
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/card_darkgreen"
-                app:strokeWidth="3dp">
-
-                <FrameLayout
+                app:strokeWidth="3dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+                
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/desk" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0.3"
-                        android:contentDescription="@null"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/desk" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
-                        android:text="计划"
+                        android:text="编辑计划"
                         android:textColor="#333333"
                         android:textSize="24sp"
                         android:textStyle="bold" />
-                </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_icon_large"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+
+                        android:src="@drawable/personalized"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:tint="@color/card_darkgreen" />
+                    
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
@@ -76,6 +92,52 @@
                         android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@drawable/dog" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tv_day_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="你已经坚持"
+                            android:textColor="#666666"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/skillstudy_edit_right_top_card_tv_day_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/harmonyos_sans_bold"
+                            android:includeFontPadding="false"
+                            android:text="99999"
+                            android:textColor="#333333"
+                            android:textSize="28sp"
+
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_day_title" />
+
+                        <TextView
+                            android:id="@+id/skillstudy_edit_right_top_card_day"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:includeFontPadding="false"
+                            android:text="天"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_day_count"
+                            app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_day_count" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -96,6 +158,52 @@
                         android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@drawable/dog2" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tv_day_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="你已经完成任务"
+                            android:textColor="#666666"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/skillstudy_edit_right_top_card_tv_task_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/harmonyos_sans_bold"
+                            android:includeFontPadding="false"
+                            android:text="99999"
+                            android:textColor="#333333"
+                            android:textSize="28sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_day_title" />
+
+                        <TextView
+                            android:id="@+id/skillstudy_edit_right_top_card_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:includeFontPadding="false"
+                            android:text="个"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_task_count"
+                            app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_task_count" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </LinearLayout>
@@ -123,7 +231,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:ignore="HardcodedText" />
-
 
 
                 <LinearLayout

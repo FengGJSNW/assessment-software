@@ -9,32 +9,37 @@
     </declare-styleable>
 
     <!--设置Fragment的卡片内容-->
+    <attr name="titleColor" format="color" />
+    <attr name="summaryColor" format="color" />
+    <attr name="iconTintColor" format="color" />
+    <attr name="backgroundAlpha" format="float" />
+
     <declare-styleable name="MySettingCard">
         <attr name="customImage" format="reference" />
         <attr name="customTitle" format="string" />
         <attr name="customText" format="string" />
+        <attr name="minLabel" format="string" />
+        <attr name="maxLabel" format="string" />
+        <attr name="bottomSpace" format="string" />
+        <attr name="backgroundImage" format="reference" />
+        <attr name="titleColor" />
+        <attr name="summaryColor" />
+        <attr name="iconTintColor" />
+        <attr name="backgroundAlpha" />
 
         <attr name="customMode" format="enum">
             <enum name="jump" value="0" />
             <enum name="toggle" value="1" />
             <enum name="slider" value="2" />
         </attr>
-
-        <attr name="minLabel" format="string" />
-        <attr name="maxLabel" format="string" />
-
-        <attr name="bottomSpace" format="string" />
-
-        <attr name="backgroundImage" format="reference" />
     </declare-styleable>
-
-    <!--自定义顶栏加标题加滑动栏-->
 
     <declare-styleable name="TopBarWithScrollView">
         <attr name="titleText" format="string" />
-        <attr name="titleColor" format="color" />
+        <attr name="titleColor" />
         <attr name="topBarMixColorWith" format="color" />
         <attr name="globalBackground" format="reference" />
     </declare-styleable>
+
 
 </resources>

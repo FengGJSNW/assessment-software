@@ -3,11 +3,11 @@ package com.example.xiaomingassistant.ui.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.xiaomingassistant.ui.fragment.mainactivity.AiFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.LifeFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.NotesFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.SettingsFragment
-import com.example.xiaomingassistant.ui.fragment.mainactivity.SkillStudyFragment
+import com.example.xiaomingassistant.ui.fragment.main_activity.AiFragment
+import com.example.xiaomingassistant.ui.fragment.main_activity.LifeFragment
+import com.example.xiaomingassistant.ui.fragment.main_activity.NotesFragment
+import com.example.xiaomingassistant.ui.fragment.main_activity.SettingsFragment
+import com.example.xiaomingassistant.ui.fragment.main_activity.SkillStudyFragment
 
 class ViewPagesAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
     override fun getItemCount(): Int = 5 // 总共 5 个界面

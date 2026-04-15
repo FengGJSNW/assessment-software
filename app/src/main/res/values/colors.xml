@@ -7,6 +7,17 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_alpha10">#1AFFFFFF</color>
+    <color name="white_alpha20">#33FFFFFF</color>
+    <color name="white_alpha30">#4DFFFFFF</color>
+    <color name="white_alpha40">#66FFFFFF</color>
+    <color name="white_alpha50">#80FFFFFF</color>
+    <color name="white_alpha60">#99FFFFFF</color>
+    <color name="white_alpha70">#B3FFFFFF</color>
+    <color name="white_alpha80">#CCFFFFFF</color>
+    <color name="white_alpha90">#E6FFFFFF</color>
+    <color name="white_alpha100">#FFFFFFFF</color>
+
     <color name="white_transparent">#66FFFFFF</color>
     <color name="white_transparent_for_card">#22FFFFFF</color>
 

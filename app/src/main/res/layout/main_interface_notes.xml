@@ -7,132 +7,331 @@
     android:background="@color/main_interface_background">
 
     <com.example.xiaomingassistant.ui.view.TopBarWithScrollView
-        android:id="@+id/settings_topbar_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:titleText="心得沉淀"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        app:titleText="心得沉淀">
 
-        <!--个性化-->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <!-- 顶部操作区 -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_darkgreen"
+                app:strokeWidth="3dp">
 
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/settings_card_personalized"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:customImage="@drawable/personalized"
-                    app:customMode="jump"
-                    app:customText="自定义某些图片"
-                    app:customTitle="个性化" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/settings_card_night"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:customImage="@drawable/personalized"
-                    app:customMode="toggle"
-                    app:customText="使用暗色防止在黑暗环境损害眼睛"
-                    app:customTitle="夜间模式" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="笔记管理"
+                        android:textColor="#222222"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/settings_card_fontsize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:customImage="@drawable/personalized"
-                    app:customMode="slider"
-                    app:customText="滑动滑动条更改字体大小"
-                    app:customTitle="文字大小" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="整理你的学习心得与灵感记录"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
-            </LinearLayout>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/notes_btn_add_note"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:text="添加笔记"
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/card_darkgreen"
+                            app:cornerRadius="14dp"
+                            app:icon="@drawable/pencil"
+                            app:iconPadding="8dp" />
 
-        </com.google.android.material.card.MaterialCardView>
+                        <Space
+                            android:layout_width="10dp"
+                            android:layout_height="wrap_content" />
 
-        <!--权限-->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/notes_manage_category"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:text="分类管理"
+                            android:textSize="14sp"
+                            android:textColor="@color/card_darkgreen"
+                            app:backgroundTint="@android:color/white"
+                            app:cornerRadius="14dp"
+                            app:icon="@drawable/personalized"
+                            app:iconPadding="8dp"
+                            app:iconTint="@color/card_darkgreen"
+                            app:strokeColor="@color/card_darkgreen"
+                            app:strokeWidth="2dp" />
 
-            <LinearLayout
+                        <Space
+                            android:layout_width="10dp"
+                            android:layout_height="wrap_content" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/notes_btn_search_note"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:text="搜索"
+                            android:textSize="14sp"
+                            android:textColor="@color/card_darkgreen"
+                            app:backgroundTint="@android:color/white"
+                            app:cornerRadius="14dp"
+                            app:icon="@drawable/personalized"
+                            app:iconPadding="8dp"
+                            app:iconTint="@color/card_darkgreen"
+                            app:strokeColor="@color/card_darkgreen"
+                            app:strokeWidth="2dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 分类：Android -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_darkgreen"
+                app:strokeWidth="3dp">
 
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/settings_card_power"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:customImage="@drawable/personalized"
-                    app:customMode="jump"
-                    app:customText="获取某些必要的权限"
-                    app:customTitle="权限" />
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Android"
+                        android:textColor="#222222"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="与界面、生命周期、组件通信相关"
+                        android:textColor="#666666"
+                        android:textSize="13sp" />
 
-        <!--关于-->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/note_android_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#D8EBDD"
+                        app:strokeWidth="2dp">
 
-            <LinearLayout
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
+                            android:text="Fragment 生命周期的理解"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/note_android_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#D8EBDD"
+                        app:strokeWidth="2dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
+                            android:text="ViewBinding 和 findViewById 的区别"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 分类：Java / Kotlin -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_darkgreen"
+                app:strokeWidth="3dp">
 
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/settings_card_about"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:customImage="@drawable/personalized"
-                    app:customMode="jump"
-                    app:customText="来看看作者吧"
-                    app:customTitle="关于" />
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Java / Kotlin"
+                        android:textColor="#222222"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="语法、面向对象、语言特性"
+                        android:textColor="#666666"
+                        android:textSize="13sp" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/note_lang_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#D8EBDD"
+                        app:strokeWidth="2dp">
 
-            <LinearLayout
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
+                            android:text="Kotlin 中 require 的使用场景"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/note_lang_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#D8EBDD"
+                        app:strokeWidth="2dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
+                            android:text="抽象类与接口的规范使用"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 分类：随想记录 -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="1000dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_darkgreen"
+                app:strokeWidth="3dp">
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="随想记录"
+                        android:textColor="#222222"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="日常灵感、思考与碎片记录"
+                        android:textColor="#666666"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/note_misc_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#D8EBDD"
+                        app:strokeWidth="2dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
+                            android:text="今天整理知识点时的一些想法"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 

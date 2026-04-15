@@ -38,15 +38,6 @@ class MySettingCard @JvmOverloads constructor(
             0
         )
 
-        val title = ta.getString(R.styleable.MySettingCard_customTitle)
-        val summary = ta.getString(R.styleable.MySettingCard_customText)
-        val imageRes = ta.getResourceId(R.styleable.MySettingCard_customImage, 0)
-        val mode = ta.getInt(R.styleable.MySettingCard_customMode, 0)
-        val minLabel = ta.getString(R.styleable.MySettingCard_minLabel)
-        val maxLabel = ta.getString(R.styleable.MySettingCard_maxLabel)
-        val bottomSpaceValue = ta.getString(R.styleable.MySettingCard_bottomSpace)
-        val imageResId = ta.getResourceId(R.styleable.MySettingCard_backgroundImage, 0)
-
         val titleView = view.findViewById<TextView>(R.id.functional_card_text_title)
         val summaryView = view.findViewById<TextView>(R.id.functional_card_summary)
         val iconView = view.findViewById<ImageView>(R.id.functional_card_icon)
@@ -57,11 +48,28 @@ class MySettingCard @JvmOverloads constructor(
         val tvMin = view.findViewById<TextView>(R.id.functional_card_tv_min)
         val tvMax = view.findViewById<TextView>(R.id.functional_card_tv_max)
         val bottomSpace = view.findViewById<Space>(R.id.functional_card_bottom_space)
-        val backgroundView = view.findViewById<View>(R.id.functional_card_background)
+        val backgroundImageView = view.findViewById<ImageView>(R.id.functional_card_background_image)
+
+        val title = ta.getString(R.styleable.MySettingCard_customTitle)
+        val summary = ta.getString(R.styleable.MySettingCard_customText)
+        val imageRes = ta.getResourceId(R.styleable.MySettingCard_customImage, 0)
+        val mode = ta.getInt(R.styleable.MySettingCard_customMode, 0)
+        val minLabel = ta.getString(R.styleable.MySettingCard_minLabel)
+        val maxLabel = ta.getString(R.styleable.MySettingCard_maxLabel)
+        val bottomSpaceValue = ta.getString(R.styleable.MySettingCard_bottomSpace)
+        val imageResId = ta.getResourceId(R.styleable.MySettingCard_backgroundImage, 0)
+        val titleColor = ta.getColor(R.styleable.MySettingCard_titleColor, titleView.currentTextColor)
+        val summaryColor = ta.getColor(R.styleable.MySettingCard_summaryColor, summaryView.currentTextColor)
+        val iconTintColor = ta.getColor(R.styleable.MySettingCard_iconTintColor, 0)
+        val backgroundAlpha = ta.getFloat(R.styleable.MySettingCard_backgroundAlpha, 1f)
 
         // 背景图标设置
         if (imageResId != 0) {
-            backgroundView.setBackgroundResource(imageResId)
+            backgroundImageView.setImageResource(imageResId)
+            backgroundImageView.isVisible = true
+            backgroundImageView.alpha = backgroundAlpha.coerceIn(0f, 1f)
+        } else {
+            backgroundImageView.isVisible = false
         }
         if (imageRes != 0) {
             iconView.setImageResource(imageRes)
@@ -71,6 +79,19 @@ class MySettingCard @JvmOverloads constructor(
         titleView.text = title ?: ""
         summaryView.text = summary ?: ""
 
+        titleView.setTextColor(titleColor)
+        summaryView.setTextColor(summaryColor)
+
+        if (iconTintColor != 0) {
+            iconView.setColorFilter(iconTintColor)
+            arrowView.setColorFilter(iconTintColor)
+        } else {
+            iconView.clearColorFilter()
+            arrowView.clearColorFilter()
+        }
+
+        backgroundImageView.alpha = backgroundAlpha.coerceIn(0f, 1f)
+
         // 按钮设置
         switchBtn?.apply {
             showText = false
@@ -79,7 +100,7 @@ class MySettingCard @JvmOverloads constructor(
         }
 
         // 底部空间填充
-        bottomSpace.layoutParams.height = dp2px(bottomSpaceValue ?: "0")
+        bottomSpace.layoutParams.height = dp2px(bottomSpaceValue ?: "0") + dp2px("16")
 
         // 卡片模式切换
         when (mode) {

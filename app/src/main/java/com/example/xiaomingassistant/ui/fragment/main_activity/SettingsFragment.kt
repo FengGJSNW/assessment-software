@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.ui.fragment.mainactivity
+package com.example.xiaomingassistant.ui.fragment.main_activity
 
 import android.content.Intent
 import android.net.Uri
@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.LoginActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.ui.view.MySettingCard
-import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 
 class SettingsFragment : Fragment(R.layout.main_interface_settings) {
 

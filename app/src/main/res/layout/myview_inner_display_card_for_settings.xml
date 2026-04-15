@@ -2,10 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/functional_card_background"
+    android:id="@+id/functional_card_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/functional_card_background_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/functional_card_icon"
@@ -14,6 +26,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/functional_card_text_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/functional_card_text_container"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
         app:tint="@color/card_darkgreen"
         tools:src="@drawable/personalized" />
 
@@ -22,7 +36,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="28dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toStartOf="@+id/functional_card_interaction_frame"
         app:layout_constraintStart_toEndOf="@id/functional_card_icon"
@@ -61,6 +76,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:alpha="0.4"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/right_arrow"
             android:visibility="gone" />
 
@@ -69,12 +85,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:showText="false"
             android:textOn=""
             android:textOff=""
+            android:layout_marginEnd="16dp"
+            app:showText="false"
+            app:thumbTint="@color/white"
             app:trackDecorationTint="@color/card_darkgreen"
-            app:trackTint="@color/card_darkgreen"
-            app:thumbTint="@color/white" />
+            app:trackTint="@color/card_darkgreen" />
     </FrameLayout>
 
     <LinearLayout
@@ -82,13 +99,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/functional_card_text_container"
         app:layout_constraintTop_toBottomOf="@id/functional_card_text_container"
+        app:layout_constraintStart_toStartOf="@id/functional_card_text_container"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible">
 
         <TextView
@@ -119,9 +136,11 @@
 
     <Space
         android:id="@+id/functional_card_bottom_space"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
         app:layout_constraintTop_toBottomOf="@id/functional_card_mode_slider_group"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

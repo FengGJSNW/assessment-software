@@ -28,7 +28,7 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_interface_weather)
+        setContentView(R.layout.activity_weather)
         initViews()
 
         // 全面屏适配
@@ -44,6 +44,8 @@ class WeatherActivity : AppCompatActivity() {
 
         requestLocationAndLoadWeather()
     }
+
+
 
     private fun initViews() {
         topBarView = findViewById(R.id.weather_topbar_container)
