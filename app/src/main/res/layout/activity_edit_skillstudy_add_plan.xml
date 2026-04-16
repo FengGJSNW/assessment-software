@@ -11,55 +11,288 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:titleText="添加计划">
-        
-        <TextView
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="时间段"/>
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="2dp">
 
-        <LinearLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="时间安排"
+                    android:textColor="#222222"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="开始时间"
+                    android:textColor="#222222"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.4"
+                        android:hint="年"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_start_year"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="月"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_start_month"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="日"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_start_day"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="结束时间"
+                    android:textColor="#222222"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1.4"
+                        android:hint="年"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_end_year"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="月"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_end_month"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="日"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <AutoCompleteTextView
+                            android:id="@+id/skillstudy_edit_add_end_day"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="0dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:cl>
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_darkgreen"
+            app:strokeWidth="2dp">
 
-            <ImageView
-                android:id="@+id/skillstudy_edit_add_image1"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:background="@drawable/icon_for_none"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <TextView
-                android:layout_marginStart="18dp"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:text="开始日期：--/--/--"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="计划内容"
+                    android:textColor="#222222"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/icon_for_none" />
 
-            <ImageView
-                android:id="@+id/skillstudy_edit_add_image1"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:background="@drawable/icon_for_none"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="18dp"
+                        android:layout_weight="1"
+                        android:hint="计划标题"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/skillstudy_edit_add_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
 
-            <TextView
-                android:layout_marginStart="18dp"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:text="开始日期：--/--/--"/>
 
-        </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="top"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_marginTop="12dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/icon_for_none" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="18dp"
+                        android:layout_weight="1"
+                        android:hint="计划备注"
+                        app:boxCornerRadiusBottomEnd="18dp"
+                        app:boxCornerRadiusBottomStart="18dp"
+                        app:boxCornerRadiusTopEnd="18dp"
+                        app:boxCornerRadiusTopStart="18dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/skillstudy_edit_add_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top|start"
+                            android:minLines="6" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 
