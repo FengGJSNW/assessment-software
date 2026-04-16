@@ -20,10 +20,6 @@ class PlanEditingActivity : BaseActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.plan_edit_fragment_container, mainFragment, "main")
-                .add(R.id.plan_edit_fragment_container, addFragment, "add")
-                .hide(addFragment)
-                .add(R.id.plan_edit_fragment_container, deleteFragment, "delete")
-                .hide(deleteFragment)
                 .commit()
         }
 
@@ -39,12 +35,27 @@ class PlanEditingActivity : BaseActivity() {
         })
     }
 
+
+
     fun showMainFragment() {
         switchTo(mainFragment)
     }
 
     fun showAddFragment() {
-        switchTo(addFragment)
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.fast_fade_in, R.anim.fast_fade_out)
+            .apply {
+                hide(mainFragment)
+
+                if (addFragment.isAdded) {
+                    show(addFragment)
+                } else {
+                    add(R.id.plan_edit_fragment_container, addFragment, "add")
+                }
+
+                if (deleteFragment.isAdded) hide(deleteFragment)
+            }
+            .commit()
     }
 
     fun showDeleteFragment() {
@@ -67,9 +78,5 @@ class PlanEditingActivity : BaseActivity() {
 
     private fun isShowingAddOrDelete(): Boolean {
         return addFragment.isVisible || deleteFragment.isVisible
-    }
-
-    fun TerminateActivity() {
-        finish()
     }
 }

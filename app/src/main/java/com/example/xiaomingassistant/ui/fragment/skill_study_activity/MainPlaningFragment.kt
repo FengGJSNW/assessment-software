@@ -29,9 +29,7 @@ class MainPlaningFragment : Fragment() {
         topBarWithScrollView.clearTopBarLeftIcons()
         topBarWithScrollView.clearTopBarRightIcons()
 
-        topBarWithScrollView.addTopBarLeftIcon(R.drawable.back_arrow) { }
-
-
+        topBarWithScrollView.addTopBarLeftIcon(R.drawable.back_arrow) { activity?.finish() }
 
         addPlanButton.setOnClickListener {
             (requireActivity() as PlanEditingActivity).showAddFragment()

@@ -260,6 +260,8 @@ class TopBarWithScrollView @JvmOverloads constructor(
         }
     }
 
+
+
     private fun setIconLocation() {
         val iconSize = dpToPx(20f)
         val sidePadding = dpToPx(20f)

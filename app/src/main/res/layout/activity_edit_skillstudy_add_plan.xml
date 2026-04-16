@@ -7,10 +7,59 @@
     android:background="@color/main_interface_background">
 
     <com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+        android:id="@+id/skillstudy_edit_add_plan_topbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:titleText="添加计划">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="时间段"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:cl>
+
+            <ImageView
+                android:id="@+id/skillstudy_edit_add_image1"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="@drawable/icon_for_none"/>
+
+            <TextView
+                android:layout_marginStart="18dp"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:text="开始日期：--/--/--"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/skillstudy_edit_add_image1"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="@drawable/icon_for_none"/>
+
+            <TextView
+                android:layout_marginStart="18dp"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:text="开始日期：--/--/--"/>
+
+        </LinearLayout>
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 
