@@ -159,47 +159,65 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         val repo = repository ?: return
         val finishedToday = repo.isFinishedToday(plan.id, today)
 
-        val items = if (finishedToday) {
-            arrayOf("撤销单日完成", "全部完成")
+        val builder = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("任务：" + plan.title)
+            .setMessage(
+                if (finishedToday) {
+                    "今天这个任务已经完成，你可以撤销今日完成，或将它标记为全部完成。"
+                } else {
+                    "你可以将这个任务标记为单日完成，或直接全部完成。"
+                }
+            )
+            // 原本是 Negative，现在改为 Neutral 按钮，使其位于最左侧
+            .setNeutralButton("取消", null)
+
+        if (finishedToday) {
+            // 原本是 Neutral，现在改为 Negative 按钮，使其位于中间
+            builder.setNegativeButton("撤销单日完成") { _, _ ->
+                repo.unmarkFinishedToday(plan.id, today)
+                renderPlanList()
+            }
         } else {
-            arrayOf("单日完成", "全部完成")
+            // 原本是 Neutral，现在改为 Negative 按钮，使其位于中间
+            builder.setNegativeButton("单日完成") { _, _ ->
+                repo.markFinishedToday(plan.id, today)
+                renderPlanList()
+            }
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(plan.title)
-            .setItems(items) { _, which ->
-                when (items[which]) {
-                    "单日完成" -> {
-                        repo.markFinishedToday(plan.id, today)
-                        renderPlanList()
-                    }
+        builder.setPositiveButton("全部完成") { _, _ ->
+            showDeleteConfirmDialog(plan.id, plan.title)
+        }
 
-                    "撤销单日完成" -> {
-                        repo.unmarkFinishedToday(plan.id, today)
-                        renderPlanList()
-                    }
-
-                    "全部完成" -> {
-                        showDeleteConfirmDialog(plan.id, plan.title)
-                    }
-                }
-            }
-            .setNegativeButton("取消", null)
-            .show()
+        val dialog = builder.create()
+        styleDialog(dialog)
     }
 
     private fun showDeleteConfirmDialog(planId: Long, title: String) {
         val repo = repository ?: return
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("确认是否完成")
-            .setMessage("全部完成后任务会被删除，且无法恢复。\n\n$title")
-            .setPositiveButton("确认") { _, _ ->
+        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("确认全部完成")
+            .setMessage("任务「$title」全部完成后会被删除，且无法恢复。")
+            .setPositiveButton("确认完成") { _, _ ->
                 repo.deleteAsFinished(planId)
                 renderPlanList()
             }
-            .setNegativeButton("取消", null)
-            .show()
+            .setNegativeButton("再想想", null)
+            .create()
+
+        styleDialog(dialog)
+    }
+
+    private fun styleDialog(dialog: androidx.appcompat.app.AlertDialog) {
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
+
+        val textColor = requireContext().getColor(R.color.black)
+
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
     }
 
     override fun onDestroyView() {

@@ -128,7 +128,7 @@ class EditPlanFragment : Fragment() {
                 submitPlan()
             }
 
-            topBarWithScrollView?.addTopBarRightIcon(R.drawable.minus) {
+            topBarWithScrollView?.addTopBarRightIcon(R.drawable.garbage) {
                 deletePlan()
             }
         }
@@ -242,11 +242,32 @@ class EditPlanFragment : Fragment() {
 
     private fun deletePlan() {
         val planId = editingPlanId ?: return
-        val repo = PlanRepository(requireContext())
-        repo.delete(planId)
-        toast("删除成功")
-        editingPlanId = null
-        (requireActivity() as PlanEditingActivity).showMainFragment()
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("确认删除")
+            .setMessage("确定要删除这个计划吗？删除后无法恢复。")
+            .setPositiveButton("确认删除") { _, _ ->
+                val repo = PlanRepository(requireContext())
+                repo.delete(planId)
+                toast("删除成功")
+                editingPlanId = null
+                (requireActivity() as PlanEditingActivity).showMainFragment()
+            }
+            .setNegativeButton("取消", null)
+            .create()
+
+        // 1. 必须先显示 Dialog，否则 getButton 会返回 null
+        dialog.show()
+
+        // 2. 设置背景样式
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
+
+        // 3. 在 show 之后获取按钮并修改颜色
+        val textColor = requireContext().getColor(R.color.black)
+
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
     }
 
     private fun loadPlan(planId: Long) {

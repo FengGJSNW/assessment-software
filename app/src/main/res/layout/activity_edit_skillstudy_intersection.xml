@@ -112,6 +112,7 @@
                         android:id="@+id/skillstudy_edit_plan_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:text="0"
