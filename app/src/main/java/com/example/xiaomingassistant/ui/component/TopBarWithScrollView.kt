@@ -203,6 +203,15 @@ class TopBarWithScrollView @JvmOverloads constructor(
         }
         topBarLeftIconContainer.addView(iconView)
     }
+    fun refreshLayoutState() {
+        post {
+            setupInitialLayout()
+            setIconLocation()
+            val progress = (scrollView.scrollY / collapseRange).coerceIn(0f, 1f)
+            updateTitle(progress)
+            updateBlur(progress)
+        }
+    }
 
     fun clearTopBarLeftIcons() {
         topBarLeftIconContainer.removeAllViews()

@@ -3,15 +3,13 @@ package com.example.xiaomingassistant
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import com.example.xiaomingassistant.ui.fragment.skill_study_activity.AddPlanFragment
-import com.example.xiaomingassistant.ui.fragment.skill_study_activity.DeletePlanFragment
+import com.example.xiaomingassistant.ui.fragment.skill_study_activity.EditPlanFragment
 import com.example.xiaomingassistant.ui.fragment.skill_study_activity.MainPlaningFragment
 
 class PlanEditingActivity : BaseActivity() {
 
     private val mainFragment = MainPlaningFragment()
-    private val addFragment = AddPlanFragment()
-    private val deleteFragment = DeletePlanFragment()
+    private val editFragment = EditPlanFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +23,7 @@ class PlanEditingActivity : BaseActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isShowingAddOrDelete()) {
+                if (isShowingEditFragment()) {
                     showMainFragment()
                 } else {
                     isEnabled = false
@@ -35,48 +33,70 @@ class PlanEditingActivity : BaseActivity() {
         })
     }
 
-
-
     fun showMainFragment() {
-        switchTo(mainFragment)
-    }
-
-    fun showAddFragment() {
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.fast_fade_in, R.anim.fast_fade_out)
-            .apply {
-                hide(mainFragment)
-
-                if (addFragment.isAdded) {
-                    show(addFragment)
-                } else {
-                    add(R.id.plan_edit_fragment_container, addFragment, "add")
-                }
-
-                if (deleteFragment.isAdded) hide(deleteFragment)
-            }
-            .commit()
-    }
-
-    fun showDeleteFragment() {
-        switchTo(deleteFragment)
-    }
-
-    private fun switchTo(target: Fragment) {
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.fast_fade_in,
                 R.anim.fast_fade_out
             )
             .apply {
-                listOf(mainFragment, addFragment, deleteFragment).forEach { fragment ->
-                    if (fragment == target) show(fragment) else hide(fragment)
-                }
+                if (editFragment.isAdded) hide(editFragment)
+                if (mainFragment.isAdded) show(mainFragment)
             }
             .commit()
+
+        mainFragment.refreshPlansIfVisible()
     }
 
-    private fun isShowingAddOrDelete(): Boolean {
-        return addFragment.isVisible || deleteFragment.isVisible
+    fun showAddFragment() {
+        editFragment.openForCreate()
+
+        if (!editFragment.isAdded) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fast_fade_in,
+                    R.anim.fast_fade_out
+                )
+                .hide(mainFragment)
+                .add(R.id.plan_edit_fragment_container, editFragment, "edit")
+                .commit()
+        } else {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fast_fade_in,
+                    R.anim.fast_fade_out
+                )
+                .hide(mainFragment)
+                .show(editFragment)
+                .commit()
+        }
+    }
+
+    fun showEditFragment(planId: Long) {
+        editFragment.openForEdit(planId)
+
+        if (!editFragment.isAdded) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fast_fade_in,
+                    R.anim.fast_fade_out
+                )
+                .hide(mainFragment)
+                .add(R.id.plan_edit_fragment_container, editFragment, "edit")
+                .commit()
+        } else {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fast_fade_in,
+                    R.anim.fast_fade_out
+                )
+                .hide(mainFragment)
+                .show(editFragment)
+                .commit()
+        }
+    }
+
+    private fun isShowingEditFragment(): Boolean {
+        return editFragment.isAdded && editFragment.isVisible
     }
 }
