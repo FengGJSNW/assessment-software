@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -19,6 +20,7 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
+import androidx.constraintlayout.widget.ConstraintLayout
 
 class TopBarWithScrollView @JvmOverloads constructor(
     context: Context,
@@ -33,6 +35,8 @@ class TopBarWithScrollView @JvmOverloads constructor(
     private lateinit var contentContainer: LinearLayout
     private lateinit var contentHost: LinearLayout
     private lateinit var titleSpacer: View
+    private lateinit var topBarRightIconContainer: LinearLayout
+    private lateinit var topBarLeftIconContainer: LinearLayout
 
     private var currentTopBarHeight = 0
     private var statusBarHeight = 0
@@ -87,6 +91,7 @@ class TopBarWithScrollView @JvmOverloads constructor(
         setupInitialLayout()
         setupScroll()
         setupSnap()
+        setIconLocation()
 
         ViewCompat.requestApplyInsets(this)
     }
@@ -100,6 +105,9 @@ class TopBarWithScrollView @JvmOverloads constructor(
         contentHost = findViewById(R.id.content_host)
         titleSpacer = findViewById(R.id.title_spacer)
         globalBackground = findViewById(R.id.myview_global_background)
+        topBarRightIconContainer = findViewById(R.id.top_bar_right_icon_container)
+        topBarLeftIconContainer = findViewById(R.id.top_bar_left_icon_container)
+
 
         if (initialBackgroundRes != -1) {
             globalBackground.setImageResource(initialBackgroundRes)
@@ -162,6 +170,48 @@ class TopBarWithScrollView @JvmOverloads constructor(
         }
     }
 
+    fun addTopBarRightIcon(
+        @DrawableRes iconRes: Int,
+        onClick: (() -> Unit)? = null
+    ) {
+        val iconView = ImageView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(26), dp(26)).apply {
+                marginStart = dp(12)
+            }
+            setImageResource(iconRes)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { onClick?.invoke() }
+        }
+        topBarRightIconContainer.addView(iconView)
+    }
+
+    fun addTopBarLeftIcon(
+        @DrawableRes iconRes: Int,
+        onClick: (() -> Unit)? = null
+    ) {
+        val iconView = ImageView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(26), dp(26)).apply {
+                marginEnd = dp(12)
+            }
+            setImageResource(iconRes)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { onClick?.invoke() }
+        }
+        topBarLeftIconContainer.addView(iconView)
+    }
+
+    fun clearTopBarLeftIcons() {
+        topBarLeftIconContainer.removeAllViews()
+    }
+
+    fun clearTopBarRightIcons() {
+        topBarRightIconContainer.removeAllViews()
+    }
+
     private fun setupInitialLayout() {
         post {
             val titleWidth = floatingTitle.width.toFloat()
@@ -186,11 +236,16 @@ class TopBarWithScrollView @JvmOverloads constructor(
             endTitleX = targetCenterX - collapsedWidth / 2f
             endTitleY = targetCenterY + collapsedHeight / 2f - titleHeight
 
+
+            setIconLocation()
+
+
             // 初始状态
             floatingTitle.translationX = startTitleX
             floatingTitle.translationY = startTitleY
             floatingTitle.scaleX = 1f
             floatingTitle.scaleY = 1f
+
 
             // 给滚动内容预留空间
             val spacerHeight = titleHeight.toInt() + dpToPx(0f)
@@ -202,6 +257,31 @@ class TopBarWithScrollView @JvmOverloads constructor(
             // 如果当前已经有滚动，立即同步一次标题状态
             val progress = (scrollView.scrollY / collapseRange).coerceIn(0f, 1f)
             updateTitle(progress)
+        }
+    }
+
+    private fun setIconLocation() {
+        val iconSize = dpToPx(20f)
+        val sidePadding = dpToPx(20f)
+
+        val collapsedTitleCenterY =
+            endTitleY + (floatingTitle.height * collapsedScale) / 2f
+
+        val localCenterY = collapsedTitleCenterY - topBarContainer.y
+        val iconTopMargin = (localCenterY - iconSize / 2f).toInt()
+
+        topBarLeftIconContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            width = ConstraintLayout.LayoutParams.WRAP_CONTENT
+            leftMargin = sidePadding
+            topMargin = iconTopMargin
+            topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+        }
+
+        topBarRightIconContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            width = ConstraintLayout.LayoutParams.WRAP_CONTENT
+            rightMargin = sidePadding
+            topMargin = iconTopMargin
+            topToTop = ConstraintLayout.LayoutParams.PARENT_ID
         }
     }
 
@@ -288,5 +368,9 @@ class TopBarWithScrollView @JvmOverloads constructor(
             dp,
             resources.displayMetrics
         ).toInt()
+    }
+
+    private fun dp(value: Int): Int {
+        return (value * resources.displayMetrics.density + 0.5f).toInt()
     }
 }

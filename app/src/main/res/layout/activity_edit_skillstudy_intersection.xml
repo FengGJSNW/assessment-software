@@ -7,6 +7,7 @@
     android:background="@color/main_interface_background">
 
     <com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+        android:id="@+id/skillstudy_edit_intersection_topbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:titleText="编辑计划">
@@ -79,7 +80,7 @@
                         android:focusable="true"
                         app:backgroundTint="@android:color/white"
                         app:cornerRadius="14dp"
-                        app:icon="@drawable/personalized"
+                        app:icon="@drawable/icon_for_none"
                         app:iconPadding="8dp"
                         app:iconTint="@color/card_darkgreen"
                         app:strokeColor="@color/card_darkgreen"
@@ -91,11 +92,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/plan_edit_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/skillstudy_edit_card_show_information"
@@ -125,7 +121,7 @@
                 <LinearLayout
                     android:id="@+id/skillstudy_edit_task_list_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="1000dp"
                     android:orientation="vertical"
                     android:paddingBottom="20dp" />
 

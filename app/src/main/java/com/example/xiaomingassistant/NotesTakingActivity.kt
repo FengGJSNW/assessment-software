@@ -1,4 +1,4 @@
 package com.example.xiaomingassistant
 
-class NotesTakingActivity {
+class NotesTakingActivity : BaseActivity(){
 }

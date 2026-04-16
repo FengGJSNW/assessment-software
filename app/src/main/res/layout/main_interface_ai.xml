@@ -35,7 +35,7 @@
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_marginTop="4dp"
-                    android:src="@drawable/personalized"
+                    android:src="@drawable/icon_for_none"
                     android:tint="@color/card_darkgreen"
                     tools:ignore="ContentDescription" />
 
@@ -108,7 +108,7 @@
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_marginTop="4dp"
-                    android:src="@drawable/personalized"
+                    android:src="@drawable/icon_for_none"
                     android:tint="@color/card_darkgreen"
                     tools:ignore="ContentDescription" />
 
@@ -192,7 +192,7 @@
                 android:text=""
                 app:backgroundTint="@color/card_darkgreen"
                 app:cornerRadius="14dp"
-                app:icon="@drawable/personalized"
+                app:icon="@drawable/icon_for_none"
                 app:iconTint="@android:color/white" />
 
         </LinearLayout>

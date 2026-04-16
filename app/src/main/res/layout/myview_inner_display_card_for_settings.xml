@@ -29,7 +29,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
         app:tint="@color/card_darkgreen"
-        tools:src="@drawable/personalized" />
+        tools:src="@drawable/icon_for_none" />
 
     <LinearLayout
         android:id="@+id/functional_card_text_container"

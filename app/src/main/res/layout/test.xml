@@ -16,7 +16,7 @@
             android:id="@+id/settings_card_power"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:customImage="@drawable/personalized"
+            app:customImage="@drawable/icon_for_none"
             app:customMode="jump"
             app:customTitle="权限"
             app:customText="获取某些必要的权限" />

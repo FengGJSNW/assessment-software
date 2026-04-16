@@ -55,7 +55,7 @@
                         android:id="@+id/settings_card_personalized"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
+                        app:customImage="@drawable/icon_for_none"
                         app:customMode="jump"
                         app:customTitle="个性化"
                         app:customText="自定义某些图片" />
@@ -64,7 +64,7 @@
                         android:id="@+id/settings_card_night"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
+                        app:customImage="@drawable/icon_for_none"
                         app:customMode="toggle"
                         app:customTitle="夜间模式"
                         app:customText="使用暗色防止在黑暗环境损害眼睛" />
@@ -73,7 +73,7 @@
                         android:id="@+id/settings_card_fontsize"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
+                        app:customImage="@drawable/icon_for_none"
                         app:customMode="slider"
                         app:customTitle="文字大小"
                         app:customText="滑动滑动条更改字体大小" />
@@ -102,7 +102,7 @@
                         android:id="@+id/settings_card_power"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
+                        app:customImage="@drawable/icon_for_none"
                         app:customMode="jump"
                         app:customTitle="权限"
                         app:customText="获取某些必要的权限" />
@@ -130,7 +130,7 @@
                         android:id="@+id/settings_card_about"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:customImage="@drawable/personalized"
+                        app:customImage="@drawable/icon_for_none"
                         app:customMode="jump"
                         app:customTitle="关于"
                         app:customText="来看看作者吧" />

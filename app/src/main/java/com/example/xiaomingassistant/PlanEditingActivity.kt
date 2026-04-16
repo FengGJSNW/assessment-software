@@ -1,41 +1,71 @@
 package com.example.xiaomingassistant
 
 import android.os.Bundle
-import com.google.android.material.button.MaterialButton
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.ui.fragment.skill_study_activity.AddPlanFragment
 import com.example.xiaomingassistant.ui.fragment.skill_study_activity.DeletePlanFragment
-
+import com.example.xiaomingassistant.ui.fragment.skill_study_activity.MainPlaningFragment
 
 class PlanEditingActivity : BaseActivity() {
 
+    private val mainFragment = MainPlaningFragment()
+    private val addFragment = AddPlanFragment()
+    private val deleteFragment = DeletePlanFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_skillstudy_intersection)
+        setContentView(R.layout.activity_edit_skillstudy_main)
 
-        val addPlanButton = findViewById<MaterialButton>(R.id.skillstudy_edit_btn_add_plan)
-        val deletePlanButton = findViewById<MaterialButton>(R.id.skillstudy_edit_btn_delete_plan)
-
-        // 默认先显示添加计划页
         if (savedInstanceState == null) {
-            switchFragment(AddPlanFragment())
+            supportFragmentManager.beginTransaction()
+                .add(R.id.plan_edit_fragment_container, mainFragment, "main")
+                .add(R.id.plan_edit_fragment_container, addFragment, "add")
+                .hide(addFragment)
+                .add(R.id.plan_edit_fragment_container, deleteFragment, "delete")
+                .hide(deleteFragment)
+                .commit()
         }
 
-        addPlanButton.setOnClickListener {
-            switchFragment(AddPlanFragment())
-        }
-
-        deletePlanButton.setOnClickListener {
-            switchFragment(DeletePlanFragment())
-        }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isShowingAddOrDelete()) {
+                    showMainFragment()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
-    private fun switchFragment(fragment: androidx.fragment.app.Fragment) {
+    fun showMainFragment() {
+        switchTo(mainFragment)
+    }
+
+    fun showAddFragment() {
+        switchTo(addFragment)
+    }
+
+    fun showDeleteFragment() {
+        switchTo(deleteFragment)
+    }
+
+    private fun switchTo(target: Fragment) {
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
-                android.R.anim.fade_in,
-                android.R.anim.fade_out
+                R.anim.fast_fade_in,
+                R.anim.fast_fade_out
             )
-            .replace(R.id.plan_edit_fragment_container, fragment)
+            .apply {
+                listOf(mainFragment, addFragment, deleteFragment).forEach { fragment ->
+                    if (fragment == target) show(fragment) else hide(fragment)
+                }
+            }
             .commit()
+    }
+
+    private fun isShowingAddOrDelete(): Boolean {
+        return addFragment.isVisible || deleteFragment.isVisible
     }
 }
