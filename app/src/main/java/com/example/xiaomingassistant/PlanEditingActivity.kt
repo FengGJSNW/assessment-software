@@ -68,4 +68,8 @@ class PlanEditingActivity : BaseActivity() {
     private fun isShowingAddOrDelete(): Boolean {
         return addFragment.isVisible || deleteFragment.isVisible
     }
+
+    fun TerminateActivity() {
+        finish()
+    }
 }
