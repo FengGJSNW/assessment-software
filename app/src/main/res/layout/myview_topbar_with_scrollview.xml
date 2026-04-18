@@ -80,7 +80,6 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         android:scrollbars="none"
-        android:overScrollMode="always"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,6 +113,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
