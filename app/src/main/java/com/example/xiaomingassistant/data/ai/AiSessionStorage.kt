@@ -9,22 +9,20 @@ class AiSessionStorage(context: Context) {
     private val sp = context.getSharedPreferences("ai_session", Context.MODE_PRIVATE)
     private val gson = Gson()
 
-    fun saveConversation(messages: List<ChatMessage>) {
+    private fun keyConversation(userId: Long): String = "conversation_$userId"
+
+    fun saveConversation(userId: Long, messages: List<ChatMessage>) {
         val json = gson.toJson(messages)
-        sp.edit().putString(KEY_CONVERSATION, json).apply()
+        sp.edit().putString(keyConversation(userId), json).apply()
     }
 
-    fun loadConversation(): List<ChatMessage> {
-        val json = sp.getString(KEY_CONVERSATION, null) ?: return emptyList()
+    fun loadConversation(userId: Long): List<ChatMessage> {
+        val json = sp.getString(keyConversation(userId), null) ?: return emptyList()
         val type = object : TypeToken<List<ChatMessage>>() {}.type
         return gson.fromJson(json, type) ?: emptyList()
     }
 
-    fun clearConversation() {
-        sp.edit().remove(KEY_CONVERSATION).apply()
-    }
-
-    companion object {
-        private const val KEY_CONVERSATION = "conversation"
+    fun clearConversation(userId: Long) {
+        sp.edit().remove(keyConversation(userId)).apply()
     }
 }

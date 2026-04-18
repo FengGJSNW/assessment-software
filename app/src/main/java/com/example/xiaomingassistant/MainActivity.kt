@@ -1,9 +1,11 @@
 package com.example.xiaomingassistant
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.core.view.WindowCompat
 import androidx.viewpager2.widget.ViewPager2
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.adapter.ViewPagesAdapter
 import com.example.xiaomingassistant.ui.component.MainInterfaceBottomBar
 
@@ -41,7 +43,22 @@ class MainActivity : BaseActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val sessionManager = SessionManager(this)
+
+        if (!sessionManager.isLoggedIn()) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+    }
+
     private fun dpToPx(dp: Float): Int = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
     ).toInt()
+
+
 }

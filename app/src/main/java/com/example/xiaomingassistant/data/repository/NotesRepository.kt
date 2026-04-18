@@ -11,15 +11,17 @@ class NotesRepository(context: Context) {
 
     private val dbHelper = NotesDbHelper(context.applicationContext)
 
-    fun getAllCategories(): List<NoteCategory> {
+    fun getAllCategories(userId: Long): List<NoteCategory> {
+        dbHelper.ensureDefaultCategory(userId)
+
         val db = dbHelper.readableDatabase
         val result = mutableListOf<NoteCategory>()
 
         db.query(
             NotesDbHelper.TABLE_CATEGORY,
             null,
-            null,
-            null,
+            "${NotesDbHelper.CATEGORY_USER_ID} = ?",
+            arrayOf(userId.toString()),
             null,
             null,
             "${NotesDbHelper.CATEGORY_CREATED_AT} ASC"
@@ -37,12 +39,13 @@ class NotesRepository(context: Context) {
         return result
     }
 
-    fun addCategory(name: String): Boolean {
+    fun addCategory(userId: Long, name: String): Boolean {
         val realName = name.trim()
         if (realName.isBlank()) return false
 
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
+            put(NotesDbHelper.CATEGORY_USER_ID, userId)
             put(NotesDbHelper.CATEGORY_NAME, realName)
             put(NotesDbHelper.CATEGORY_CREATED_AT, System.currentTimeMillis())
         }
@@ -54,7 +57,7 @@ class NotesRepository(context: Context) {
         }
     }
 
-    fun renameCategory(categoryId: Long, newName: String): Boolean {
+    fun renameCategory(userId: Long, categoryId: Long, newName: String): Boolean {
         val realName = newName.trim()
         if (realName.isBlank()) return false
 
@@ -67,23 +70,24 @@ class NotesRepository(context: Context) {
             db.update(
                 NotesDbHelper.TABLE_CATEGORY,
                 values,
-                "${NotesDbHelper.CATEGORY_ID} = ?",
-                arrayOf(categoryId.toString())
+                "${NotesDbHelper.CATEGORY_ID} = ? AND ${NotesDbHelper.CATEGORY_USER_ID} = ?",
+                arrayOf(categoryId.toString(), userId.toString())
             ) > 0
         } catch (_: SQLiteConstraintException) {
             false
         }
     }
 
-    fun deleteCategory(categoryId: Long): Boolean {
+    fun deleteCategory(userId: Long, categoryId: Long): Boolean {
         val db = dbHelper.writableDatabase
 
         db.rawQuery(
             """
             SELECT COUNT(*) FROM ${NotesDbHelper.TABLE_NOTE}
             WHERE ${NotesDbHelper.NOTE_CATEGORY_ID} = ?
+              AND ${NotesDbHelper.NOTE_USER_ID} = ?
             """.trimIndent(),
-            arrayOf(categoryId.toString())
+            arrayOf(categoryId.toString(), userId.toString())
         ).use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -93,12 +97,12 @@ class NotesRepository(context: Context) {
 
         return db.delete(
             NotesDbHelper.TABLE_CATEGORY,
-            "${NotesDbHelper.CATEGORY_ID} = ?",
-            arrayOf(categoryId.toString())
+            "${NotesDbHelper.CATEGORY_ID} = ? AND ${NotesDbHelper.CATEGORY_USER_ID} = ?",
+            arrayOf(categoryId.toString(), userId.toString())
         ) > 0
     }
 
-    fun getAllNotes(): List<NoteItem> {
+    fun getAllNotes(userId: Long): List<NoteItem> {
         val db = dbHelper.readableDatabase
         val result = mutableListOf<NoteItem>()
 
@@ -113,11 +117,13 @@ class NotesRepository(context: Context) {
             FROM ${NotesDbHelper.TABLE_NOTE} n
             INNER JOIN ${NotesDbHelper.TABLE_CATEGORY} c
             ON n.${NotesDbHelper.NOTE_CATEGORY_ID} = c.${NotesDbHelper.CATEGORY_ID}
+            WHERE n.${NotesDbHelper.NOTE_USER_ID} = ?
+              AND c.${NotesDbHelper.CATEGORY_USER_ID} = ?
             ORDER BY c.${NotesDbHelper.CATEGORY_CREATED_AT} ASC,
                      n.${NotesDbHelper.NOTE_UPDATED_AT} DESC
         """.trimIndent()
 
-        db.rawQuery(sql, null).use { cursor ->
+        db.rawQuery(sql, arrayOf(userId.toString(), userId.toString())).use { cursor ->
             while (cursor.moveToNext()) {
                 result.add(
                     NoteItem(
@@ -136,7 +142,7 @@ class NotesRepository(context: Context) {
         return result
     }
 
-    fun getNoteById(noteId: Long): NoteItem? {
+    fun getNoteById(userId: Long, noteId: Long): NoteItem? {
         val db = dbHelper.readableDatabase
 
         val sql = """
@@ -151,9 +157,11 @@ class NotesRepository(context: Context) {
             INNER JOIN ${NotesDbHelper.TABLE_CATEGORY} c
             ON n.${NotesDbHelper.NOTE_CATEGORY_ID} = c.${NotesDbHelper.CATEGORY_ID}
             WHERE n.${NotesDbHelper.NOTE_ID} = ?
+              AND n.${NotesDbHelper.NOTE_USER_ID} = ?
+              AND c.${NotesDbHelper.CATEGORY_USER_ID} = ?
         """.trimIndent()
 
-        db.rawQuery(sql, arrayOf(noteId.toString())).use { cursor ->
+        db.rawQuery(sql, arrayOf(noteId.toString(), userId.toString(), userId.toString())).use { cursor ->
             if (cursor.moveToFirst()) {
                 return NoteItem(
                     id = cursor.getLong(0),
@@ -169,10 +177,11 @@ class NotesRepository(context: Context) {
         return null
     }
 
-    fun insertNote(categoryId: Long, title: String, content: String): Long {
+    fun insertNote(userId: Long, categoryId: Long, title: String, content: String): Long {
         val now = System.currentTimeMillis()
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
+            put(NotesDbHelper.NOTE_USER_ID, userId)
             put(NotesDbHelper.NOTE_CATEGORY_ID, categoryId)
             put(NotesDbHelper.NOTE_TITLE, title.trim())
             put(NotesDbHelper.NOTE_CONTENT, content.trim())
@@ -182,7 +191,7 @@ class NotesRepository(context: Context) {
         return db.insert(NotesDbHelper.TABLE_NOTE, null, values)
     }
 
-    fun updateNote(noteId: Long, categoryId: Long, title: String, content: String): Boolean {
+    fun updateNote(userId: Long, noteId: Long, categoryId: Long, title: String, content: String): Boolean {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(NotesDbHelper.NOTE_CATEGORY_ID, categoryId)
@@ -194,23 +203,23 @@ class NotesRepository(context: Context) {
         return db.update(
             NotesDbHelper.TABLE_NOTE,
             values,
-            "${NotesDbHelper.NOTE_ID} = ?",
-            arrayOf(noteId.toString())
+            "${NotesDbHelper.NOTE_ID} = ? AND ${NotesDbHelper.NOTE_USER_ID} = ?",
+            arrayOf(noteId.toString(), userId.toString())
         ) > 0
     }
 
-    fun deleteNote(noteId: Long): Boolean {
+    fun deleteNote(userId: Long, noteId: Long): Boolean {
         val db = dbHelper.writableDatabase
         return db.delete(
             NotesDbHelper.TABLE_NOTE,
-            "${NotesDbHelper.NOTE_ID} = ?",
-            arrayOf(noteId.toString())
+            "${NotesDbHelper.NOTE_ID} = ? AND ${NotesDbHelper.NOTE_USER_ID} = ?",
+            arrayOf(noteId.toString(), userId.toString())
         ) > 0
     }
 
-    fun getNotesGroupedByCategory(): List<Pair<NoteCategory, List<NoteItem>>> {
-        val categories = getAllCategories()
-        val allNotes = getAllNotes()
+    fun getNotesGroupedByCategory(userId: Long): List<Pair<NoteCategory, List<NoteItem>>> {
+        val categories = getAllCategories(userId)
+        val allNotes = getAllNotes(userId)
         return categories.map { category ->
             category to allNotes.filter { it.categoryId == category.id }
         }

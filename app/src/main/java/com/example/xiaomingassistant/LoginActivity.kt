@@ -6,11 +6,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.example.xiaomingassistant.data.repository.UserRepository
-import com.example.xiaomingassistant.data.session.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
 class LoginActivity : BaseActivity() {
+
+    override fun requiresLoginCheck(): Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,31 +24,38 @@ class LoginActivity : BaseActivity() {
         val loginButton = findViewById<MaterialButton>(R.id.login_btn_login)
 
         val userRepository = UserRepository(this)
-        val sessionManager = SessionManager(this)
 
         registerButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
         loginButton.setOnClickListener {
-            val username = accountEditText.text.toString().trim()
-            val password = passwordEditText.text.toString()
+            val username = accountEditText.text?.toString()?.trim().orEmpty()
+            val password = passwordEditText.text?.toString().orEmpty()
 
             when (val result = userRepository.login(username, password)) {
                 is UserRepository.LoginResult.Success -> {
                     sessionManager.saveLogin(result.user.id, result.user.username)
                     Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
                 }
+
                 UserRepository.LoginResult.UsernameEmpty -> {
                     Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()
                 }
+
                 UserRepository.LoginResult.PasswordEmpty -> {
                     Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show()
                 }
+
                 UserRepository.LoginResult.UserNotFound -> {
                     Toast.makeText(this, "用户不存在", Toast.LENGTH_SHORT).show()
                 }
+
                 UserRepository.LoginResult.WrongPassword -> {
                     Toast.makeText(this, "密码错误", Toast.LENGTH_SHORT).show()
                 }

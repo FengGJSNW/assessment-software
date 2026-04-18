@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xiaomingassistant.R
-import com.example.xiaomingassistant.ui.adapter.AiMessageAdapter
+import com.example.xiaomingassistant.ui.fragment.main_activity.AiMessageAdapter
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
@@ -52,13 +52,37 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
 
     private fun setupTopBar() {
         topBar.clearTopBarRightIcons()
-        topBar.addTopBarRightIcon(R.drawable.icon_for_none) {
-            viewModel.clearConversation()
+        topBar.addTopBarRightIcon(R.drawable.garbage) {
+            showClearConversationDialog()
         }
     }
 
+    private fun showClearConversationDialog() {
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("清空对话")
+            .setMessage("确定清空当前会话吗？清空后将删除当前上下文，且无法恢复。")
+            .setPositiveButton("清空") { _, _ ->
+                viewModel.clearConversation()
+            }
+            .setNegativeButton("取消", null)
+            .create()
+
+        styleDialog(dialog)
+    }
+
+    private fun styleDialog(dialog: androidx.appcompat.app.AlertDialog) {
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
+
+        val textColor = requireContext().getColor(R.color.black)
+
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
+    }
+
     private fun setupRecyclerView() {
-        adapter = AiMessageAdapter()
+        adapter = AiMessageAdapter(requireContext())
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
     }

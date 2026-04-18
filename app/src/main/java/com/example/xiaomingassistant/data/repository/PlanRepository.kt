@@ -2,17 +2,18 @@ package com.example.xiaomingassistant.data
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import com.example.xiaomingassistant.data.db.PlanDatabaseHelper
 import com.example.xiaomingassistant.data.model.Plan
-import android.database.sqlite.SQLiteDatabase
 
 class PlanRepository(context: Context) {
 
-    private val dbHelper = PlanDatabaseHelper(context)
+    private val dbHelper = PlanDatabaseHelper(context.applicationContext)
 
     fun insert(plan: Plan): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
+            put("userId", plan.userId)
             put("title", plan.title)
             put("startDate", plan.startDate)
             put("endDate", plan.endDate)
@@ -33,26 +34,29 @@ class PlanRepository(context: Context) {
         return dbHelper.writableDatabase.update(
             "study_plan",
             values,
-            "id=?",
-            arrayOf(plan.id.toString())
+            "id=? AND userId=?",
+            arrayOf(plan.id.toString(), plan.userId.toString())
         )
     }
 
-    fun getAll(): List<Plan> {
+    fun getAll(userId: Long): List<Plan> {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM study_plan ORDER BY id DESC", null)
+        val cursor = db.rawQuery(
+            "SELECT * FROM study_plan WHERE userId=? ORDER BY id DESC",
+            arrayOf(userId.toString())
+        )
 
         val list = mutableListOf<Plan>()
-
         while (cursor.moveToNext()) {
             list.add(
                 Plan(
-                    id = cursor.getLong(0),
-                    title = cursor.getString(1),
-                    startDate = cursor.getString(2),
-                    endDate = cursor.getString(3),
-                    note = cursor.getString(4),
-                    isFinished = cursor.getInt(5)
+                    id = cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                    userId = cursor.getLong(cursor.getColumnIndexOrThrow("userId")),
+                    title = cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                    startDate = cursor.getString(cursor.getColumnIndexOrThrow("startDate")),
+                    endDate = cursor.getString(cursor.getColumnIndexOrThrow("endDate")),
+                    note = cursor.getString(cursor.getColumnIndexOrThrow("note")),
+                    isFinished = cursor.getInt(cursor.getColumnIndexOrThrow("isFinished"))
                 )
             )
         }
@@ -61,21 +65,22 @@ class PlanRepository(context: Context) {
         return list
     }
 
-    fun getById(id: Long): Plan? {
+    fun getById(userId: Long, id: Long): Plan? {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
-            "SELECT * FROM study_plan WHERE id=? LIMIT 1",
-            arrayOf(id.toString())
+            "SELECT * FROM study_plan WHERE id=? AND userId=? LIMIT 1",
+            arrayOf(id.toString(), userId.toString())
         )
 
         val result = if (cursor.moveToFirst()) {
             Plan(
-                id = cursor.getLong(0),
-                title = cursor.getString(1),
-                startDate = cursor.getString(2),
-                endDate = cursor.getString(3),
-                note = cursor.getString(4),
-                isFinished = cursor.getInt(5)
+                id = cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                userId = cursor.getLong(cursor.getColumnIndexOrThrow("userId")),
+                title = cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                startDate = cursor.getString(cursor.getColumnIndexOrThrow("startDate")),
+                endDate = cursor.getString(cursor.getColumnIndexOrThrow("endDate")),
+                note = cursor.getString(cursor.getColumnIndexOrThrow("note")),
+                isFinished = cursor.getInt(cursor.getColumnIndexOrThrow("isFinished"))
             )
         } else {
             null
@@ -85,50 +90,70 @@ class PlanRepository(context: Context) {
         return result
     }
 
-    fun delete(id: Long): Int {
+    fun delete(userId: Long, id: Long): Int {
         val db = dbHelper.writableDatabase
-        db.delete("plan_daily_record", "planId=?", arrayOf(id.toString()))
-        return db.delete("study_plan", "id=?", arrayOf(id.toString()))
+        db.delete(
+            "plan_daily_record",
+            "planId=? AND userId=?",
+            arrayOf(id.toString(), userId.toString())
+        )
+        return db.delete(
+            "study_plan",
+            "id=? AND userId=?",
+            arrayOf(id.toString(), userId.toString())
+        )
     }
 
-    fun deleteAsFinished(id: Long): Int {
+    fun deleteAsFinished(userId: Long, id: Long): Int {
         val db = dbHelper.writableDatabase
+
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO plan_stat(userId, statKey, statValue)
+            VALUES (?, 'finished_total_count', 0)
+            """.trimIndent(),
+            arrayOf(userId)
+        )
+
         db.execSQL(
             """
             UPDATE plan_stat
             SET statValue = statValue + 1
-            WHERE statKey = 'finished_total_count'
-            """.trimIndent()
+            WHERE userId = ? AND statKey = 'finished_total_count'
+            """.trimIndent(),
+            arrayOf(userId)
         )
-        return delete(id)
+
+        return delete(userId, id)
     }
 
-    fun markFinished(id: Long): Int {
+    fun markFinished(userId: Long, id: Long): Int {
         val values = ContentValues().apply {
             put("isFinished", 1)
         }
         return dbHelper.writableDatabase.update(
             "study_plan",
             values,
-            "id=?",
-            arrayOf(id.toString())
+            "id=? AND userId=?",
+            arrayOf(id.toString(), userId.toString())
         )
     }
 
-    fun isFinishedToday(planId: Long, date: String): Boolean {
+    fun isFinishedToday(userId: Long, planId: Long, date: String): Boolean {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
-            "SELECT 1 FROM plan_daily_record WHERE planId=? AND recordDate=? LIMIT 1",
-            arrayOf(planId.toString(), date)
+            "SELECT 1 FROM plan_daily_record WHERE userId=? AND planId=? AND recordDate=? LIMIT 1",
+            arrayOf(userId.toString(), planId.toString(), date)
         )
         val exists = cursor.moveToFirst()
         cursor.close()
         return exists
     }
 
-    fun markFinishedToday(planId: Long, date: String): Long {
+    fun markFinishedToday(userId: Long, planId: Long, date: String): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
+            put("userId", userId)
             put("planId", planId)
             put("recordDate", date)
         }
@@ -140,19 +165,28 @@ class PlanRepository(context: Context) {
         )
     }
 
-    fun unmarkFinishedToday(planId: Long, date: String): Int {
+    fun unmarkFinishedToday(userId: Long, planId: Long, date: String): Int {
         return dbHelper.writableDatabase.delete(
             "plan_daily_record",
-            "planId=? AND recordDate=?",
-            arrayOf(planId.toString(), date)
+            "userId=? AND planId=? AND recordDate=?",
+            arrayOf(userId.toString(), planId.toString(), date)
         )
     }
 
-    fun getFinishedTotalCount(): Int {
+    fun getFinishedTotalCount(userId: Long): Int {
         val db = dbHelper.readableDatabase
+
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO plan_stat(userId, statKey, statValue)
+            VALUES (?, 'finished_total_count', 0)
+            """.trimIndent(),
+            arrayOf(userId)
+        )
+
         val cursor = db.rawQuery(
-            "SELECT statValue FROM plan_stat WHERE statKey='finished_total_count' LIMIT 1",
-            null
+            "SELECT statValue FROM plan_stat WHERE userId=? AND statKey='finished_total_count' LIMIT 1",
+            arrayOf(userId.toString())
         )
 
         val result = if (cursor.moveToFirst()) cursor.getInt(0) else 0
@@ -160,11 +194,11 @@ class PlanRepository(context: Context) {
         return result
     }
 
-    fun getEarliestStartDate(): String? {
+    fun getEarliestStartDate(userId: Long): String? {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
-            "SELECT MIN(startDate) FROM study_plan",
-            null
+            "SELECT MIN(startDate) FROM study_plan WHERE userId=?",
+            arrayOf(userId.toString())
         )
 
         val result = if (cursor.moveToFirst()) cursor.getString(0) else null

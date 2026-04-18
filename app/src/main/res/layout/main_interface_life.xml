@@ -41,71 +41,12 @@
                     app:titleColor="@color/white_alpha90"
                     app:summaryColor="@color/white_alpha80"
                     app:iconTintColor="@color/white_alpha90"
-                    app:backgroundAlpha="0.9"
+                    app:backgroundAlpha="1.0"
                     app:bottomSpace="30dp" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-        <!--喝水提醒小助手-->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/life_card_drink_assistant"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:customImage="@drawable/icon_for_none"
-                    app:customMode="jump"
-                    app:customText="提醒你喝水的得力小助手"
-                    app:customTitle="喝水提醒"
-                    app:bottomSpace="30dp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!--待定-->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.example.xiaomingassistant.ui.view.MySettingCard
-                    android:id="@+id/life_card_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:customImage="@drawable/icon_for_none"
-                    app:customMode="jump"
-                    app:customText="summary"
-                    app:customTitle="title"
-                    app:bottomSpace="30dp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 

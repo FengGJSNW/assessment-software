@@ -12,6 +12,7 @@ import com.example.xiaomingassistant.PlanEditingActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.model.Plan
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
@@ -31,8 +32,10 @@ class EditPlanFragment : Fragment() {
     private var titleEditText: TextInputEditText? = null
     private var noteEditText: TextInputEditText? = null
     private var pendingPlanId: Long? = null
-
     private var editingPlanId: Long? = null
+
+    private lateinit var sessionManager: SessionManager
+    private var userId: Long = -1L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +47,9 @@ class EditPlanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+        userId = sessionManager.getUserId()
 
         bindViews(view)
         setupDateDropdowns()
@@ -215,6 +221,7 @@ class EditPlanFragment : Fragment() {
                 if (editingPlanId == null) {
                     repo.insert(
                         Plan(
+                            userId = userId,
                             title = title,
                             startDate = startDate,
                             endDate = endDate,
@@ -226,6 +233,7 @@ class EditPlanFragment : Fragment() {
                     repo.update(
                         Plan(
                             id = editingPlanId!!,
+                            userId = userId,
                             title = title,
                             startDate = startDate,
                             endDate = endDate,
@@ -248,7 +256,7 @@ class EditPlanFragment : Fragment() {
             .setMessage("确定要删除这个计划吗？删除后无法恢复。")
             .setPositiveButton("确认删除") { _, _ ->
                 val repo = PlanRepository(requireContext())
-                repo.delete(planId)
+                repo.delete(userId, planId)
                 toast("删除成功")
                 editingPlanId = null
                 (requireActivity() as PlanEditingActivity).showMainFragment()
@@ -256,54 +264,47 @@ class EditPlanFragment : Fragment() {
             .setNegativeButton("取消", null)
             .create()
 
-        // 1. 必须先显示 Dialog，否则 getButton 会返回 null
-        dialog.show()
-
-        // 2. 设置背景样式
-        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
-
-        // 3. 在 show 之后获取按钮并修改颜色
-        val textColor = requireContext().getColor(R.color.black)
-
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
+        (requireActivity() as? PlanEditingActivity)?.styleDialog(dialog)
     }
 
     private fun loadPlan(planId: Long) {
         val repo = PlanRepository(requireContext())
-        val plan = repo.getById(planId) ?: return
+        val plan = repo.getById(userId, planId) ?: return
 
         titleEditText?.setText(plan.title)
         noteEditText?.setText(plan.note)
 
-        fillDate(plan.startDate, startYearView, startMonthView, startDayView)
-        fillDate(plan.endDate, endYearView, endMonthView, endDayView)
-
-        updateStartDayOptions()
-        updateEndDayOptions()
+        applyDateToViews(plan.startDate, startYearView, startMonthView, startDayView)
+        applyDateToViews(plan.endDate, endYearView, endMonthView, endDayView)
     }
 
-    private fun fillDate(
-        date: String,
+    private fun applyDateToViews(
+        dateText: String?,
         yearView: AutoCompleteTextView?,
         monthView: AutoCompleteTextView?,
         dayView: AutoCompleteTextView?
     ) {
-        val parts = date.split("-")
-        if (parts.size == 3) {
-            yearView?.setText(parts[0], false)
-            monthView?.setText(parts[1].toInt().toString(), false)
-            dayView?.setText(parts[2].toInt().toString(), false)
+        val parts = dateText?.split("-") ?: return
+        if (parts.size != 3) return
+
+        yearView?.setText(parts[0], false)
+        monthView?.setText(parts[1].toIntOrNull()?.toString().orEmpty(), false)
+
+        val year = parts[0].toIntOrNull()
+        val month = parts[1].toIntOrNull()
+        if (year != null && month != null) {
+            val days = (1..getDaysInMonth(year, month)).map { it.toString() }
+            dayView?.setAdapter(simpleAdapter(days))
         }
+
+        dayView?.setText(parts[2].toIntOrNull()?.toString().orEmpty(), false)
     }
 
     private fun clearForm() {
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-
         titleEditText?.setText("")
         noteEditText?.setText("")
 
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         startYearView?.setText(currentYear.toString(), false)
         endYearView?.setText(currentYear.toString(), false)
         startMonthView?.setText("1", false)
@@ -311,49 +312,35 @@ class EditPlanFragment : Fragment() {
 
         updateStartDayOptions()
         updateEndDayOptions()
-
-        startDayView?.setText("1", false)
-        endDayView?.setText("1", false)
     }
 
-    private fun buildDateText(year: String?, month: String?, day: String?): String? {
-        val y = year?.toIntOrNull() ?: return null
-        val m = month?.toIntOrNull() ?: return null
-        val d = day?.toIntOrNull() ?: return null
-        return "%04d-%02d-%02d".format(y, m, d)
+    private fun simpleAdapter(items: List<String>): ArrayAdapter<String> {
+        return ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            items
+        )
     }
 
     private fun getDaysInMonth(year: Int, month: Int): Int {
         return when (month) {
             1, 3, 5, 7, 8, 10, 12 -> 31
             4, 6, 9, 11 -> 30
-            2 -> if (isLeapYear(year)) 29 else 28
+            2 -> {
+                if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) 29 else 28
+            }
             else -> 30
         }
     }
 
-    private fun isLeapYear(year: Int): Boolean {
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-    }
-
-    private fun simpleAdapter(items: List<String>): ArrayAdapter<String> {
-        return ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, items)
+    private fun buildDateText(year: String?, month: String?, day: String?): String? {
+        val y = year?.toIntOrNull() ?: return null
+        val m = month?.toIntOrNull() ?: return null
+        val d = day?.toIntOrNull() ?: return null
+        return String.format("%04d-%02d-%02d", y, m, d)
     }
 
     private fun toast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        topBarWithScrollView = null
-        startYearView = null
-        startMonthView = null
-        startDayView = null
-        endYearView = null
-        endMonthView = null
-        endDayView = null
-        titleEditText = null
-        noteEditText = null
     }
 }

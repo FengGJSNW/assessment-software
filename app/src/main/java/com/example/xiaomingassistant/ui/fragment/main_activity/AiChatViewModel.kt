@@ -7,6 +7,7 @@ import com.example.xiaomingassistant.data.ai.AiChatRepository
 import com.example.xiaomingassistant.data.ai.AiSessionStorage
 import com.example.xiaomingassistant.data.ai.AiUiMessage
 import com.example.xiaomingassistant.data.ai.ChatMessage
+import com.example.xiaomingassistant.data.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +21,8 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
 
     private val repository = AiChatRepository()
     private val storage = AiSessionStorage(application)
+    private val sessionManager = SessionManager(application)
+    private val currentUserId = sessionManager.getUserId()
 
     private val systemPrompt = ChatMessage(
         role = "system",
@@ -35,7 +38,7 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
     val isSending: StateFlow<Boolean> = _isSending.asStateFlow()
 
     init {
-        val saved = storage.loadConversation()
+        val saved = if (currentUserId > 0) storage.loadConversation(currentUserId) else emptyList()
 
         if (saved.isEmpty()) {
             conversation.add(systemPrompt)
@@ -49,12 +52,7 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
             conversation.addAll(saved)
             _uiMessages.value = saved
                 .filter { it.role != "system" }
-                .map {
-                    AiUiMessage(
-                        role = it.role,
-                        content = it.content
-                    )
-                }
+                .map { AiUiMessage(role = it.role, content = it.content) }
         }
     }
 
@@ -64,7 +62,9 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
 
         val userMessage = ChatMessage("user", userText)
         conversation.add(userMessage)
-        storage.saveConversation(conversation)
+        if (currentUserId > 0) {
+            storage.saveConversation(currentUserId, conversation)
+        }
 
         _uiMessages.value = _uiMessages.value +
                 AiUiMessage(role = "user", content = userText) +
@@ -74,7 +74,6 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
             _isSending.value = true
             try {
                 val reply = repository.sendMessage(conversation)
-
                 val finalReply = if (reply.isBlank()) {
                     "我暂时没有生成有效回复，你可以稍后再试。"
                 } else {
@@ -82,7 +81,9 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
                 }
 
                 conversation.add(ChatMessage("assistant", finalReply))
-                storage.saveConversation(conversation)
+                if (currentUserId > 0) {
+                    storage.saveConversation(currentUserId, conversation)
+                }
 
                 val current = _uiMessages.value.toMutableList()
                 if (current.isNotEmpty() && current.last().isLoading) {
@@ -112,7 +113,6 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
 
             } catch (e: Exception) {
                 replaceLoadingWithError("发生异常：${e.message ?: "未知错误"}")
-
             } finally {
                 _isSending.value = false
             }
@@ -122,7 +122,10 @@ class AiChatViewModel(application: Application) : AndroidViewModel(application) 
     fun clearConversation() {
         conversation.clear()
         conversation.add(systemPrompt)
-        storage.clearConversation()
+
+        if (currentUserId > 0) {
+            storage.clearConversation(currentUserId)
+        }
 
         _uiMessages.value = listOf(
             AiUiMessage(

@@ -9,6 +9,8 @@ import com.google.android.material.textfield.TextInputEditText
 
 class RegisterActivity : BaseActivity() {
 
+    override fun requiresLoginCheck(): Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.PlanEditingActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.PlanRepository
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.content_display.card.TaskDisplayCardView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -23,6 +24,9 @@ class MainPlaningFragment : Fragment() {
     private var cardLeft: MaterialCardView? = null
     private var cardRight: MaterialCardView? = null
 
+    private lateinit var sessionManager: SessionManager
+    private var userId: Long = -1L
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +37,9 @@ class MainPlaningFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+        userId = sessionManager.getUserId()
 
         val addPlanButton = view.findViewById<MaterialButton>(R.id.skillstudy_edit_btn_add_plan)
 
@@ -77,7 +84,7 @@ class MainPlaningFragment : Fragment() {
     private fun renderPlans() {
         val container = taskContainer ?: return
         val repo = PlanRepository(requireContext())
-        val list = repo.getAll()
+        val list = repo.getAll(userId)
 
         planCountText?.text = list.size.toString()
 

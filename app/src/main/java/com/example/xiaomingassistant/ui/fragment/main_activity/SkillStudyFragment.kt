@@ -1,6 +1,5 @@
 package com.example.xiaomingassistant.ui.fragment.main_activity
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
@@ -14,6 +13,7 @@ import com.example.xiaomingassistant.PlanEditingActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.model.Plan
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.content_display.card.TaskDisplayCardView
 import com.google.android.material.card.MaterialCardView
 import java.time.LocalDate
@@ -31,10 +31,15 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
     private var repository: PlanRepository? = null
 
+    private lateinit var sessionManager: SessionManager
+    private var userId: Long = -1L
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         repository = PlanRepository(requireContext())
+        sessionManager = SessionManager(requireContext())
+        userId = sessionManager.getUserId()
 
         bindViews(view)
         setupCardLayout()
@@ -95,7 +100,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         val container = cardDisplayTask ?: return
         val repo = repository ?: return
 
-        val list = repo.getAll()
+        val list = repo.getAll(userId)
         val today = LocalDate.now().toString()
 
         updateStatistics()
@@ -127,8 +132,8 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
     private fun updateStatistics() {
         val repo = repository ?: return
 
-        val earliestDateText = repo.getEarliestStartDate()
-        val finishedTotal = repo.getFinishedTotalCount()
+        val earliestDateText = repo.getEarliestStartDate(userId)
+        val finishedTotal = repo.getFinishedTotalCount(userId)
 
         val keepDays = if (earliestDateText.isNullOrBlank()) {
             0
@@ -149,7 +154,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
     private fun getPointColorRes(plan: Plan, today: String, repo: PlanRepository): Int {
         return when {
-            repo.isFinishedToday(plan.id, today) -> R.color.point_green
+            repo.isFinishedToday(userId, plan.id, today) -> R.color.point_green
             today < plan.startDate -> R.color.point_yellow
             else -> R.color.point_red
         }
@@ -157,10 +162,10 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
     private fun showPlanActionDialog(plan: Plan, today: String) {
         val repo = repository ?: return
-        val finishedToday = repo.isFinishedToday(plan.id, today)
+        val finishedToday = repo.isFinishedToday(userId, plan.id, today)
 
         val builder = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle("任务：" + plan.title)
+            .setTitle("任务：${plan.title}")
             .setMessage(
                 if (finishedToday) {
                     "今天这个任务已经完成，你可以撤销今日完成，或将它标记为全部完成。"
@@ -168,19 +173,16 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
                     "你可以将这个任务标记为单日完成，或直接全部完成。"
                 }
             )
-            // 原本是 Negative，现在改为 Neutral 按钮，使其位于最左侧
             .setNeutralButton("取消", null)
 
         if (finishedToday) {
-            // 原本是 Neutral，现在改为 Negative 按钮，使其位于中间
             builder.setNegativeButton("撤销单日完成") { _, _ ->
-                repo.unmarkFinishedToday(plan.id, today)
+                repo.unmarkFinishedToday(userId, plan.id, today)
                 renderPlanList()
             }
         } else {
-            // 原本是 Neutral，现在改为 Negative 按钮，使其位于中间
             builder.setNegativeButton("单日完成") { _, _ ->
-                repo.markFinishedToday(plan.id, today)
+                repo.markFinishedToday(userId, plan.id, today)
                 renderPlanList()
             }
         }
@@ -200,7 +202,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
             .setTitle("确认全部完成")
             .setMessage("任务「$title」全部完成后会被删除，且无法恢复。")
             .setPositiveButton("确认完成") { _, _ ->
-                repo.deleteAsFinished(planId)
+                repo.deleteAsFinished(userId, planId)
                 renderPlanList()
             }
             .setNegativeButton("再想想", null)

@@ -9,11 +9,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.xiaomingassistant.data.model.NoteCategory
+import com.example.xiaomingassistant.data.repository.NotesRepository
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
-import com.example.xiaomingassistant.data.repository.NotesRepository
-import com.example.xiaomingassistant.data.model.NoteCategory
 
 class NotesCategoryManageActivity : BaseActivity() {
 
@@ -24,11 +25,16 @@ class NotesCategoryManageActivity : BaseActivity() {
     private lateinit var addButtonContainer: FrameLayout
     private lateinit var listContainer: LinearLayout
 
+    private lateinit var localSessionManager: SessionManager
+    private var userId: Long = -1L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notes_manage_classify)
 
         repository = NotesRepository(this)
+        localSessionManager = SessionManager(this)
+        userId = localSessionManager.getUserId()
 
         topBar = findViewById(R.id.activity_notes_classify_topbar)
         inputEdit = findViewById(R.id.activity_notes_classify_input_edit)
@@ -52,6 +58,10 @@ class NotesCategoryManageActivity : BaseActivity() {
         topBar.addTopBarLeftIcon(R.drawable.exit) {
             finish()
         }
+
+        topBar.addTopBarRightIcon(R.drawable.plus) {
+            addCategoryFromInput()
+        }
     }
 
     private fun setupAction() {
@@ -67,7 +77,7 @@ class NotesCategoryManageActivity : BaseActivity() {
             return
         }
 
-        val success = repository.addCategory(name)
+        val success = repository.addCategory(userId, name)
         if (success) {
             inputEdit.setText("")
             renderCategoryList()
@@ -79,7 +89,7 @@ class NotesCategoryManageActivity : BaseActivity() {
 
     private fun renderCategoryList() {
         listContainer.removeAllViews()
-        val categories = repository.getAllCategories()
+        val categories = repository.getAllCategories(userId)
 
         if (categories.isEmpty()) {
             listContainer.addView(createHintText("暂无分类"))
@@ -152,12 +162,12 @@ class NotesCategoryManageActivity : BaseActivity() {
             setPadding(dp(16), dp(16), dp(16), dp(16))
         }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("重命名分类")
             .setView(edit)
             .setPositiveButton("确定") { _, _ ->
                 val newName = edit.text?.toString()?.trim().orEmpty()
-                val success = repository.renameCategory(category.id, newName)
+                val success = repository.renameCategory(userId, category.id, newName)
                 if (success) {
                     renderCategoryList()
                     Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show()
@@ -166,15 +176,17 @@ class NotesCategoryManageActivity : BaseActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+
+        styleDialog(dialog)
     }
 
     private fun showDeleteDialog(category: NoteCategory) {
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("删除分类")
             .setMessage("确定删除“${category.name}”吗？\n若该分类下仍有笔记，将无法删除。")
             .setPositiveButton("删除") { _, _ ->
-                val success = repository.deleteCategory(category.id)
+                val success = repository.deleteCategory(userId, category.id)
                 if (success) {
                     renderCategoryList()
                     Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
@@ -183,7 +195,9 @@ class NotesCategoryManageActivity : BaseActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+
+        styleDialog(dialog)
     }
 
     private fun createHintText(message: String): View {

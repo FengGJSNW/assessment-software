@@ -5,13 +5,14 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class PlanDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "plan.db", null, 3) {
+    SQLiteOpenHelper(context, "plan.db", null, 4) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
             CREATE TABLE study_plan (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                userId INTEGER NOT NULL,
                 title TEXT NOT NULL,
                 startDate TEXT NOT NULL,
                 endDate TEXT NOT NULL,
@@ -25,9 +26,10 @@ class PlanDatabaseHelper(context: Context) :
             """
             CREATE TABLE plan_daily_record (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                userId INTEGER NOT NULL,
                 planId INTEGER NOT NULL,
                 recordDate TEXT NOT NULL,
-                UNIQUE(planId, recordDate)
+                UNIQUE(userId, planId, recordDate)
             )
             """.trimIndent()
         )
@@ -35,50 +37,19 @@ class PlanDatabaseHelper(context: Context) :
         db.execSQL(
             """
             CREATE TABLE plan_stat (
-                statKey TEXT PRIMARY KEY,
-                statValue INTEGER NOT NULL
+                userId INTEGER NOT NULL,
+                statKey TEXT NOT NULL,
+                statValue INTEGER NOT NULL,
+                PRIMARY KEY(userId, statKey)
             )
-            """.trimIndent()
-        )
-
-        db.execSQL(
-            """
-            INSERT OR IGNORE INTO plan_stat(statKey, statValue)
-            VALUES ('finished_total_count', 0)
             """.trimIndent()
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
-            db.execSQL(
-                """
-                CREATE TABLE IF NOT EXISTS plan_daily_record (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    planId INTEGER NOT NULL,
-                    recordDate TEXT NOT NULL,
-                    UNIQUE(planId, recordDate)
-                )
-                """.trimIndent()
-            )
-        }
-
-        if (oldVersion < 3) {
-            db.execSQL(
-                """
-                CREATE TABLE IF NOT EXISTS plan_stat (
-                    statKey TEXT PRIMARY KEY,
-                    statValue INTEGER NOT NULL
-                )
-                """.trimIndent()
-            )
-
-            db.execSQL(
-                """
-                INSERT OR IGNORE INTO plan_stat(statKey, statValue)
-                VALUES ('finished_total_count', 0)
-                """.trimIndent()
-            )
-        }
+        db.execSQL("DROP TABLE IF EXISTS plan_daily_record")
+        db.execSQL("DROP TABLE IF EXISTS plan_stat")
+        db.execSQL("DROP TABLE IF EXISTS study_plan")
+        onCreate(db)
     }
 }

@@ -6,6 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.repository.NotesRepository
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 
 class NotesTakingActivity : BaseActivity() {
@@ -17,6 +18,8 @@ class NotesTakingActivity : BaseActivity() {
     private lateinit var categoryText: TextView
     private lateinit var contentText: TextView
 
+    private lateinit var localSessionManager: SessionManager
+    private var userId: Long = -1L
     private var noteId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +27,8 @@ class NotesTakingActivity : BaseActivity() {
         setContentView(R.layout.activity_notes_taking)
 
         repository = NotesRepository(this)
+        localSessionManager = SessionManager(this)
+        userId = localSessionManager.getUserId()
 
         topBar = findViewById(R.id.activity_notes_taking_topbar)
         titleText = findViewById(R.id.activity_notes_taking_title)
@@ -66,7 +71,7 @@ class NotesTakingActivity : BaseActivity() {
     }
 
     private fun loadNote() {
-        val note = repository.getNoteById(noteId)
+        val note = repository.getNoteById(userId, noteId)
         if (note == null) {
             Toast.makeText(this, "笔记不存在", Toast.LENGTH_SHORT).show()
             finish()
@@ -80,11 +85,11 @@ class NotesTakingActivity : BaseActivity() {
     }
 
     private fun showDeleteDialog() {
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("删除笔记")
             .setMessage("确定删除这条笔记吗？删除后无法恢复。")
             .setPositiveButton("删除") { _, _ ->
-                val success = repository.deleteNote(noteId)
+                val success = repository.deleteNote(userId, noteId)
                 if (success) {
                     Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
                     finish()
@@ -93,7 +98,9 @@ class NotesTakingActivity : BaseActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+
+        styleDialog(dialog)
     }
 
     companion object {

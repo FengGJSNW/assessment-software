@@ -137,8 +137,8 @@
                     android:layout_height="wrap_content"
                     app:customImage="@drawable/icon_for_none"
                     app:customMode="jump"
-                    app:customText="登陆"
-                    app:customTitle="登陆和注册" />
+                    app:customText="点击退出登录"
+                    app:customTitle="注销" />
 
             </LinearLayout>
 

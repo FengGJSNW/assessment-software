@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.ui.adapter
+package com.example.xiaomingassistant.ui.fragment.main_activity
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -14,128 +14,126 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.ai.AiUiMessage
+import com.example.xiaomingassistant.ui.util.MarkdownHelper
 import com.google.android.material.card.MaterialCardView
 
-class AiMessageAdapter : RecyclerView.Adapter<AiMessageAdapter.MessageViewHolder>() {
+class AiMessageAdapter(
+    private val context: Context
+) : RecyclerView.Adapter<AiMessageAdapter.MessageViewHolder>() {
 
-    private val items = mutableListOf<AiUiMessage>()
+    private val messages = mutableListOf<AiUiMessage>()
 
     fun submitList(newList: List<AiUiMessage>) {
-        items.clear()
-        items.addAll(newList)
+        messages.clear()
+        messages.addAll(newList)
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val context = parent.context
-
-        val root = LinearLayout(context).apply {
+        val container = LinearLayout(context).apply {
             layoutParams = RecyclerView.LayoutParams(
                 RecyclerView.LayoutParams.MATCH_PARENT,
                 RecyclerView.LayoutParams.WRAP_CONTENT
             ).apply {
-                bottomMargin = dp(context, 12)
+                bottomMargin = dp(12)
             }
             orientation = LinearLayout.HORIZONTAL
+            setPadding(dp(4), dp(2), dp(4), dp(2))
         }
-
-        return MessageViewHolder(root)
+        return MessageViewHolder(container)
     }
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(messages[position])
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = messages.size
 
     inner class MessageViewHolder(
-        private val root: LinearLayout
-    ) : RecyclerView.ViewHolder(root) {
+        private val container: LinearLayout
+    ) : RecyclerView.ViewHolder(container) {
 
         fun bind(item: AiUiMessage) {
-            val context = root.context
-            root.removeAllViews()
+            container.removeAllViews()
 
             if (item.role == "user") {
-                root.gravity = Gravity.END
-
-                val card = MaterialCardView(context).apply {
-                    radius = dp(context, 20).toFloat()
-                    strokeWidth = dp(context, 2)
-                    strokeColor = ContextCompat.getColor(context, R.color.card_darkgreen)
-                    setCardBackgroundColor(Color.parseColor("#EAF7F1"))
-                }
-
-                val textView = TextView(context).apply {
-                    text = item.content
-                    setTextColor(Color.parseColor("#222222"))
-                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-                    setPadding(
-                        dp(context, 16),
-                        dp(context, 14),
-                        dp(context, 16),
-                        dp(context, 14)
-                    )
-                    maxWidth = dp(context, 260)
-                }
-
-                card.addView(textView)
-                root.addView(card)
-
+                bindUserMessage(item)
             } else {
-                root.gravity = Gravity.START
-
-                val icon = ImageView(context).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        dp(context, 34),
-                        dp(context, 34)
-                    ).apply {
-                        topMargin = dp(context, 4)
-                    }
-                    setImageResource(R.drawable.icon_for_none)
-                    imageTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(context, R.color.card_darkgreen)
-                    )
-                }
-
-                val card = MaterialCardView(context).apply {
-                    radius = dp(context, 20).toFloat()
-                    strokeWidth = dp(context, 2)
-                    strokeColor = Color.parseColor("#D8EBDD")
-                    setCardBackgroundColor(Color.WHITE)
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        leftMargin = dp(context, 10)
-                    }
-                }
-
-                val textView = TextView(context).apply {
-                    text = item.content
-                    setTextColor(Color.parseColor("#222222"))
-                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-                    setPadding(
-                        dp(context, 16),
-                        dp(context, 14),
-                        dp(context, 16),
-                        dp(context, 14)
-                    )
-                    maxWidth = dp(context, 260)
-
-                    if (item.isLoading) {
-                        setTypeface(typeface, Typeface.ITALIC)
-                    }
-                }
-
-                card.addView(textView)
-                root.addView(icon)
-                root.addView(card)
+                bindAiMessage(item)
             }
+        }
+
+        private fun bindUserMessage(item: AiUiMessage) {
+            container.gravity = Gravity.END
+
+            val card = MaterialCardView(context).apply {
+                radius = dp(20).toFloat()
+                strokeWidth = dp(1)
+                strokeColor = Color.parseColor("#CFE7D7")
+                setCardBackgroundColor(Color.parseColor("#EAF7F1"))
+                cardElevation = 0f
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    marginStart = dp(56)
+                }
+            }
+
+            val textView = TextView(context).apply {
+                text = item.content
+                setTextColor(Color.parseColor("#1F1F1F"))
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+                setLineSpacing(dp(3).toFloat(), 1f)
+                setPadding(dp(16), dp(14), dp(16), dp(14))
+                maxWidth = (context.resources.displayMetrics.widthPixels * 0.68f).toInt()
+            }
+
+            card.addView(textView)
+            container.addView(card)
+        }
+
+        private fun bindAiMessage(item: AiUiMessage) {
+            container.gravity = Gravity.START
+
+            val card = MaterialCardView(context).apply {
+                radius = dp(22).toFloat()
+                strokeWidth = dp(1)
+                strokeColor = Color.parseColor("#D9E6DD")
+                setCardBackgroundColor(Color.WHITE)
+                cardElevation = 0f
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    marginEnd = dp(28)
+                }
+            }
+
+            val textView = TextView(context).apply {
+                setTextColor(Color.parseColor("#222222"))
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+                setLineSpacing(dp(4).toFloat(), 1.08f)
+                setPadding(dp(18), dp(16), dp(18), dp(16))
+
+                if (item.isLoading) {
+                    setTypeface(typeface, Typeface.ITALIC)
+                }
+
+                isClickable = true
+                isLongClickable = true
+                linksClickable = true
+            }
+
+            MarkdownHelper.get(context).setMarkdown(textView, item.content)
+
+            card.addView(textView)
+            container.addView(card)
         }
     }
 
-    private fun dp(context: Context, value: Int): Int {
+    private fun dp(value: Int): Int {
         return (value * context.resources.displayMetrics.density + 0.5f).toInt()
     }
 }

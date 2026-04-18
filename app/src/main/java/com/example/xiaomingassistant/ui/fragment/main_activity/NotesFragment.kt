@@ -16,12 +16,16 @@ import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.model.NoteItem
 import com.example.xiaomingassistant.data.repository.NotesRepository
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
 class NotesFragment : Fragment(R.layout.main_interface_notes) {
 
     private lateinit var repository: NotesRepository
+    private lateinit var sessionManager: SessionManager
+    private var currentUserId: Long = -1L
+
     private lateinit var notesDisplay: LinearLayout
     private lateinit var addNoteButton: MaterialButton
     private lateinit var manageCategoryButton: MaterialButton
@@ -30,6 +34,8 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
         super.onViewCreated(view, savedInstanceState)
 
         repository = NotesRepository(requireContext())
+        sessionManager = SessionManager(requireContext())
+        currentUserId = sessionManager.getUserId()
 
         notesDisplay = view.findViewById(R.id.notes_display)
         addNoteButton = view.findViewById(R.id.notes_btn_add_note)
@@ -52,7 +58,7 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
     private fun renderNotes() {
         notesDisplay.removeAllViews()
 
-        val grouped = repository.getNotesGroupedByCategory()
+        val grouped = repository.getNotesGroupedByCategory(currentUserId)
         val hasAnyNote = grouped.any { it.second.isNotEmpty() }
 
         if (!hasAnyNote) {

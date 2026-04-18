@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.repository.NotesRepository
+import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.textfield.TextInputEditText
 
@@ -19,6 +20,9 @@ class NotesEditActivity : BaseActivity() {
     private lateinit var titleEdit: TextInputEditText
     private lateinit var contentEdit: TextInputEditText
 
+    private lateinit var localSessionManager: SessionManager
+    private var userId: Long = -1L
+
     private var categories: List<NoteCategory> = emptyList()
     private var selectedCategoryId: Long = -1L
     private var editingNoteId: Long = -1L
@@ -28,6 +32,8 @@ class NotesEditActivity : BaseActivity() {
         setContentView(R.layout.activity_notes_add_notes)
 
         repository = NotesRepository(this)
+        localSessionManager = SessionManager(this)
+        userId = localSessionManager.getUserId()
 
         topBar = findViewById(R.id.activity_notes_adding_topbar)
         categoryAutoComplete = findViewById(R.id.activity_notes_adding_category_auto_complete)
@@ -63,11 +69,11 @@ class NotesEditActivity : BaseActivity() {
     }
 
     private fun loadCategories() {
-        categories = repository.getAllCategories()
+        categories = repository.getAllCategories(userId)
 
         if (categories.isEmpty()) {
-            repository.addCategory("未分类")
-            categories = repository.getAllCategories()
+            repository.addCategory(userId, "未分类")
+            categories = repository.getAllCategories(userId)
         }
 
         val names = categories.map { it.name }
@@ -88,7 +94,7 @@ class NotesEditActivity : BaseActivity() {
     private fun loadEditDataIfNeeded() {
         if (editingNoteId <= 0) return
 
-        val note = repository.getNoteById(editingNoteId) ?: return
+        val note = repository.getNoteById(userId, editingNoteId) ?: return
         titleEdit.setText(note.title)
         contentEdit.setText(note.content)
         selectedCategoryId = note.categoryId
@@ -118,9 +124,9 @@ class NotesEditActivity : BaseActivity() {
         selectedCategoryId = matchedCategory.id
 
         val success = if (editingNoteId > 0) {
-            repository.updateNote(editingNoteId, selectedCategoryId, title, content)
+            repository.updateNote(userId, editingNoteId, selectedCategoryId, title, content)
         } else {
-            repository.insertNote(selectedCategoryId, title, content) > 0
+            repository.insertNote(userId, selectedCategoryId, title, content) > 0
         }
 
         if (success) {
@@ -132,11 +138,11 @@ class NotesEditActivity : BaseActivity() {
     }
 
     private fun showDeleteDialog() {
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("删除笔记")
             .setMessage("确定删除这条笔记吗？删除后无法恢复。")
             .setPositiveButton("删除") { _, _ ->
-                val success = repository.deleteNote(editingNoteId)
+                val success = repository.deleteNote(userId, editingNoteId)
                 if (success) {
                     Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
                     finish()
@@ -145,7 +151,9 @@ class NotesEditActivity : BaseActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+
+        styleDialog(dialog)
     }
 
     companion object {
