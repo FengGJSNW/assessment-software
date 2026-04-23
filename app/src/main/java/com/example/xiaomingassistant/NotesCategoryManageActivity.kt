@@ -15,6 +15,11 @@ import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
+import com.example.xiaomingassistant.util.calc.dp
+import com.example.xiaomingassistant.util.dialog.DialogBuilder
+import com.example.xiaomingassistant.util.dialog.setInputView
+import com.example.xiaomingassistant.util.toast.showShortToast
+import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
 
 class NotesCategoryManageActivity : BaseActivity() {
 
@@ -103,22 +108,22 @@ class NotesCategoryManageActivity : BaseActivity() {
 
     private fun createCategoryItemView(category: NoteCategory): View {
         val card = MaterialCardView(this).apply {
-            radius = dp(16).toFloat()
-            strokeWidth = dp(2)
+            radius = 16.dp.toFloat()
+            strokeWidth = 2.dp
             strokeColor = 0xFFD8EBDD.toInt()
             cardElevation = 0f
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                bottomMargin = dp(12)
+                bottomMargin = 12.dp
             }
         }
 
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            setPadding(dp(16), dp(16), dp(16), dp(16))
+            setPadding(16.dp, 16.dp, 16.dp, 16.dp)
         }
 
         val title = TextView(this).apply {
@@ -133,7 +138,7 @@ class NotesCategoryManageActivity : BaseActivity() {
             text = "重命名"
             setTextColor(0xFF4F7F62.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            setPadding(dp(10), dp(6), dp(10), dp(6))
+            setPadding(10.dp, 6.dp, 10.dp, 6.dp)
             setOnClickListener {
                 showRenameDialog(category)
             }
@@ -143,7 +148,7 @@ class NotesCategoryManageActivity : BaseActivity() {
             text = "删除"
             setTextColor(0xFF4F7F62.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            setPadding(dp(10), dp(6), dp(10), dp(6))
+            setPadding(10.dp, 6.dp, 10.dp, 6.dp)
             setOnClickListener {
                 showDeleteDialog(category)
             }
@@ -156,32 +161,35 @@ class NotesCategoryManageActivity : BaseActivity() {
         return card
     }
 
+    /* Dialog: 显示重命名对话框 */
     private fun showRenameDialog(category: NoteCategory) {
-        val edit = TextInputEditText(this).apply {
-            setText(category.name)
-            setPadding(dp(16), dp(16), dp(16), dp(16))
-        }
+        lateinit var editView: TextInputEditText
 
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("重命名分类")
-            .setView(edit)
-            .setPositiveButton("确定") { _, _ ->
-                val newName = edit.text?.toString()?.trim().orEmpty()
+        val dialog = DialogBuilder {
+            setTitle("重命名分类")
+            editView = setInputView(category.name)
+            setPositiveButton("确定") { _, _ ->
+                val newName = editView.text?.toString()?.trim().orEmpty()
+                // 重命名分类
                 val success = repository.renameCategory(userId, category.id, newName)
                 if (success) {
                     renderCategoryList()
-                    Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show()
+                    showShortToast(this@NotesCategoryManageActivity,"修改成功")
                 } else {
-                    Toast.makeText(this, "修改失败，名称可能重复或为空", Toast.LENGTH_SHORT).show()
+                    showShortToast(this@NotesCategoryManageActivity,"修改失败，名称可能重复或为空")
                 }
             }
-            .setNegativeButton("取消", null)
-            .create()
+            setNegativeButton("取消", null)
+            create()
+        }
 
-        styleDialog(dialog)
+        dialog.applyRoundedStyle()
     }
 
+    /* Dialog: 显示删除对话框*/
     private fun showDeleteDialog(category: NoteCategory) {
+
+
         val dialog = AlertDialog.Builder(this)
             .setTitle("删除分类")
             .setMessage("确定删除“${category.name}”吗？\n若该分类下仍有笔记，将无法删除。")
@@ -205,7 +213,7 @@ class NotesCategoryManageActivity : BaseActivity() {
             text = message
             setTextColor(0xFF666666.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            setPadding(0, dp(8), 0, dp(8))
+            setPadding(0, 8.dp, 0, 8.dp)
         }
     }
 

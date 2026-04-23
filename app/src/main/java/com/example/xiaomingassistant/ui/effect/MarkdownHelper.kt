@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.ui.util
+package com.example.xiaomingassistant.ui.effect
 
 import android.content.Context
 import io.noties.markwon.Markwon
