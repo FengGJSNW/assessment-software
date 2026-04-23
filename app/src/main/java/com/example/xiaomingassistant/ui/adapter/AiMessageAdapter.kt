@@ -1,20 +1,16 @@
 package com.example.xiaomingassistant.ui.fragment.main_activity
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.ai.AiUiMessage
-import com.example.xiaomingassistant.ui.util.MarkdownHelper
+import com.example.xiaomingassistant.ui.effect.MarkdownHelper
 import com.google.android.material.card.MaterialCardView
 
 class AiMessageAdapter(
