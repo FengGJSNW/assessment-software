@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.location
+package com.example.xiaomingassistant.data.network.location
 
 import android.content.Context
 import android.util.Log
@@ -6,15 +6,14 @@ import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
-import com.example.xiaomingassistant.data.model.LocationResult
 
-class LocationRepository(context: Context) {
+class LocationNetworkClient(context: Context) {
 
     private val appContext = context.applicationContext
     private var locationClient: AMapLocationClient? = null
 
     fun locateOnce(
-        onSuccess: (LocationResult) -> Unit,
+        onSuccess: (AMapLocation) -> Unit,
         onError: (String) -> Unit
     ) {
         destroy()
@@ -34,29 +33,21 @@ class LocationRepository(context: Context) {
         locationClient?.setLocationListener(object : AMapLocationListener {
             override fun onLocationChanged(location: AMapLocation?) {
                 if (location == null) {
-                    Log.e("LOC", "location is null")
+                    Log.e(TAG, "location is null")
                     onError("定位结果为空")
                     destroy()
                     return
                 }
 
-                Log.d("LOC", "errorCode=${location.errorCode}")
-                Log.d("LOC", "errorInfo=${location.errorInfo}")
-                Log.d("LOC", "city=${location.city}")
-                Log.d("LOC", "district=${location.district}")
-                Log.d("LOC", "address=${location.address}")
-                Log.d("LOC", "lat=${location.latitude}, lng=${location.longitude}")
+                Log.d(TAG, "errorCode=${location.errorCode}")
+                Log.d(TAG, "errorInfo=${location.errorInfo}")
+                Log.d(TAG, "city=${location.city}")
+                Log.d(TAG, "district=${location.district}")
+                Log.d(TAG, "address=${location.address}")
+                Log.d(TAG, "lat=${location.latitude}, lng=${location.longitude}")
 
                 if (location.errorCode == 0) {
-                    onSuccess(
-                        LocationResult(
-                            city = location.city ?: "",
-                            district = location.district,
-                            latitude = location.latitude,
-                            longitude = location.longitude,
-                            address = location.address
-                        )
-                    )
+                    onSuccess(location)
                 } else {
                     onError("定位失败：${location.errorInfo} (${location.errorCode})")
                 }
@@ -72,5 +63,9 @@ class LocationRepository(context: Context) {
         locationClient?.stopLocation()
         locationClient?.onDestroy()
         locationClient = null
+    }
+
+    companion object {
+        private const val TAG = "LocationNetworkClient"
     }
 }

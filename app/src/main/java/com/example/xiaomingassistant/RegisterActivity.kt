@@ -1,13 +1,21 @@
 package com.example.xiaomingassistant
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.example.xiaomingassistant.data.repository.UserRepository
+import com.example.xiaomingassistant.util.toast.showShortToast
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
 class RegisterActivity : BaseActivity() {
+
+    // 组件 lazy 绑定
+    private val passwordEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_password) }
+    private val confirmEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_comfirm_password) }
+    private val accountEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_account) }
+    private val registerBtn by lazy { findViewById<MaterialButton>(R.id.account_btn_register) }
+    // 数据库
+    private val userRepository by lazy { UserRepository(this) }
 
     override fun requiresLoginCheck(): Boolean = false
 
@@ -16,51 +24,45 @@ class RegisterActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.account_registration_interface)
 
-        val passwordEditText = findViewById<TextInputEditText>(R.id.register_text_password)
-        val passwordConfirmEditText = findViewById<TextInputEditText>(R.id.register_text_comfirm_password)
-        val accountEditText = findViewById<TextInputEditText>(R.id.register_text_account)
-        val registerButton = findViewById<MaterialButton>(R.id.account_btn_register)
+        registerBtn.setOnClickListener {
+            handleRegistration()
+        }
+    }
 
-        val userRepository = UserRepository(this)
+    private fun handleRegistration() {
+        val username = accountEdit.text.toString().trim()
+        val password = passwordEdit.text.toString()
+        val confirmPassword = confirmEdit.text.toString()
 
-        registerButton.setOnClickListener {
-            val username = accountEditText.text.toString().trim()
-            val password = passwordEditText.text.toString()
-            val confirmPassword = passwordConfirmEditText.text.toString()
-
-            if (username.isEmpty()) {
-                Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        when {
+            username.isEmpty() -> {
+                showShortToast(this, "用户名不能为空")
+                return
             }
-
-            if (password.isEmpty()) {
-                Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            password.isEmpty() -> {
+                showShortToast(this, "密码不能为空")
+                return
             }
-
-            if (password != confirmPassword) {
-                Toast.makeText(this, "两次输入的密码不一致", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            password != confirmPassword -> {
+                showShortToast(this, "两次输入的密码不一致")
+                return
             }
+        }
 
-            when (userRepository.register(username, password)) {
-                UserRepository.RegisterResult.Success -> {
-                    Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                UserRepository.RegisterResult.UsernameEmpty -> {
-                    Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()
-                }
-                UserRepository.RegisterResult.PasswordEmpty -> {
-                    Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show()
-                }
-                UserRepository.RegisterResult.UsernameAlreadyExists -> {
-                    Toast.makeText(this, "用户名已存在", Toast.LENGTH_SHORT).show()
-                }
-                UserRepository.RegisterResult.UnknownError -> {
-                    Toast.makeText(this, "注册失败", Toast.LENGTH_SHORT).show()
-                }
-            }
+        val result = userRepository.register(username, password)
+
+        val message = when (result) {
+            UserRepository.RegisterResult.Success -> "注册成功"
+            UserRepository.RegisterResult.UsernameEmpty -> "用户名不能为空"
+            UserRepository.RegisterResult.PasswordEmpty -> "密码不能为空"
+            UserRepository.RegisterResult.UsernameAlreadyExists -> "用户名已存在"
+            UserRepository.RegisterResult.UnknownError -> "注册失败"
+        }
+
+        showShortToast(this, message)
+
+        if (result == UserRepository.RegisterResult.Success) {
+            finish()
         }
     }
 }

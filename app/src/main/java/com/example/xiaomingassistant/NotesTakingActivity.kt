@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
 
 class NotesTakingActivity : BaseActivity() {
 
@@ -100,7 +101,7 @@ class NotesTakingActivity : BaseActivity() {
             .setNegativeButton("取消", null)
             .create()
 
-        styleDialog(dialog)
+        dialog.applyRoundedStyle()
     }
 
     companion object {

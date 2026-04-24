@@ -78,7 +78,7 @@ class NotesCategoryManageActivity : BaseActivity() {
     private fun addCategoryFromInput() {
         val name = inputEdit.text?.toString()?.trim().orEmpty()
         if (name.isBlank()) {
-            Toast.makeText(this, "分类名称不能为空", Toast.LENGTH_SHORT).show()
+            showShortToast(this,"分类名称不能为空")
             return
         }
 
@@ -86,9 +86,9 @@ class NotesCategoryManageActivity : BaseActivity() {
         if (success) {
             inputEdit.setText("")
             renderCategoryList()
-            Toast.makeText(this, "分类添加成功", Toast.LENGTH_SHORT).show()
+            showShortToast(this,"分类添加成功")
         } else {
-            Toast.makeText(this, "添加失败，可能是分类重复", Toast.LENGTH_SHORT).show()
+            showShortToast(this,"添加失败，可能是分类重复")
         }
     }
 
@@ -205,7 +205,7 @@ class NotesCategoryManageActivity : BaseActivity() {
             .setNegativeButton("取消", null)
             .create()
 
-        styleDialog(dialog)
+        dialog.applyRoundedStyle()
     }
 
     private fun createHintText(message: String): View {

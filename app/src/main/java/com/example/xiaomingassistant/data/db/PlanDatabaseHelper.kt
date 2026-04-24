@@ -4,11 +4,23 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class PlanDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "plan.db", null, 4) {
+class PlanDatabaseHelper(context: Context) : SQLiteOpenHelper(
+    context,
+    "plan.db",
+    null,
+    4
+) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
+            /**
+             * @param 学习计划主表
+             * id 自增主键
+             * userId 用户ID
+             * title 计划标题
+             * startDate / endDate 起止日期
+             * isFinished 完成状态
+             */
             """
             CREATE TABLE study_plan (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,6 +34,13 @@ class PlanDatabaseHelper(context: Context) :
             """.trimIndent()
         )
 
+        /**
+         * @param 每日打卡记录表
+         * id 自增主键
+         * userId 用户ID
+         * planId 关联 study_plan 表的外键ID
+         * recordDate 打卡日期
+         */
         db.execSQL(
             """
             CREATE TABLE plan_daily_record (
@@ -34,6 +53,12 @@ class PlanDatabaseHelper(context: Context) :
             """.trimIndent()
         )
 
+        /**
+         * @param 统计数据表
+         * userId 用户ID
+         * statKey 统计项的键
+         * statValue 对应统计数值
+         */
         db.execSQL(
             """
             CREATE TABLE plan_stat (

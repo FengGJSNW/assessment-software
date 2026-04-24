@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.PlanEditingActivity
 import com.example.xiaomingassistant.R
@@ -16,6 +15,10 @@ import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
+import com.example.xiaomingassistant.util.dialog.DialogBuilder
+import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
+import com.example.xiaomingassistant.util.toast.showShortToast
+
 
 class EditPlanFragment : Fragment() {
 
@@ -99,6 +102,7 @@ class EditPlanFragment : Fragment() {
         }
     }
 
+    // 绑定组件
     private fun bindViews(view: View) {
         topBarWithScrollView = view.findViewById(R.id.skillstudy_edit_add_plan_topbar)
 
@@ -140,10 +144,11 @@ class EditPlanFragment : Fragment() {
         }
     }
 
+    // 初始化滚动输入栏，加入日期
     private fun setupDateDropdowns() {
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-        val years = (currentYear..(currentYear + 5)).map { it.toString() }
+        val years = (currentYear..(currentYear + 100)).map { it.toString() }
         val months = (1..12).map { it.toString() }
 
         startYearView?.setAdapter(simpleAdapter(years))
@@ -176,7 +181,9 @@ class EditPlanFragment : Fragment() {
         val currentDay = startDayView?.text?.toString()
 
         startDayView?.setAdapter(simpleAdapter(days))
-        if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()?.let { it > days.size } == true) {
+        if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()
+                ?.let { it > days.size } == true
+        ) {
             startDayView?.setText(days.first(), false)
         }
     }
@@ -190,11 +197,14 @@ class EditPlanFragment : Fragment() {
         val currentDay = endDayView?.text?.toString()
 
         endDayView?.setAdapter(simpleAdapter(days))
-        if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()?.let { it > days.size } == true) {
+        if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()
+                ?.let { it > days.size } == true
+        ) {
             endDayView?.setText(days.first(), false)
         }
     }
 
+    // 提交计划
     private fun submitPlan() {
         val startDate = buildDateText(
             startYearView?.text?.toString(),
@@ -212,9 +222,9 @@ class EditPlanFragment : Fragment() {
         val note = noteEditText?.text?.toString()?.trim().orEmpty()
 
         when {
-            startDate == null -> toast("请完整选择开始日期")
-            endDate == null -> toast("请完整选择结束日期")
-            title.isBlank() -> toast("请输入计划标题")
+            startDate == null -> showShortToast(requireContext(), "请完整选择开始日期")
+            endDate == null -> showShortToast(requireContext(), "请完整选择结束日期")
+            title.isBlank() -> showShortToast(requireContext(), "请输入计划标题")
             else -> {
                 val repo = PlanRepository(requireContext())
 
@@ -228,7 +238,7 @@ class EditPlanFragment : Fragment() {
                             note = note
                         )
                     )
-                    toast("添加成功")
+                    showShortToast(requireContext(), "添加成功")
                 } else {
                     repo.update(
                         Plan(
@@ -240,7 +250,7 @@ class EditPlanFragment : Fragment() {
                             note = note
                         )
                     )
-                    toast("保存成功")
+                    showShortToast(requireContext(), "保存成功")
                 }
 
                 (requireActivity() as PlanEditingActivity).showMainFragment()
@@ -248,25 +258,27 @@ class EditPlanFragment : Fragment() {
         }
     }
 
+    // 删除计划
     private fun deletePlan() {
         val planId = editingPlanId ?: return
 
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("确认删除")
-            .setMessage("确定要删除这个计划吗？删除后无法恢复。")
-            .setPositiveButton("确认删除") { _, _ ->
+        val dialog = requireContext().DialogBuilder {
+            setTitle("确认删除")
+            setMessage("确定要删除这个计划吗？删除后无法恢复。")
+            setPositiveButton("确认删除") { _, _ ->
                 val repo = PlanRepository(requireContext())
                 repo.delete(userId, planId)
-                toast("删除成功")
+                showShortToast(requireContext(), "删除成功")
                 editingPlanId = null
-                (requireActivity() as PlanEditingActivity).showMainFragment()
+                (activity as? PlanEditingActivity)?.showMainFragment()
             }
-            .setNegativeButton("取消", null)
-            .create()
+            setNegativeButton("取消", null)
+        }
 
-        (requireActivity() as? PlanEditingActivity)?.styleDialog(dialog)
+        dialog.applyRoundedStyle()
     }
 
+    // 加载计划
     private fun loadPlan(planId: Long) {
         val repo = PlanRepository(requireContext())
         val plan = repo.getById(userId, planId) ?: return
@@ -278,6 +290,7 @@ class EditPlanFragment : Fragment() {
         applyDateToViews(plan.endDate, endYearView, endMonthView, endDayView)
     }
 
+    // 将日期显示在滚动输入框内
     private fun applyDateToViews(
         dateText: String?,
         yearView: AutoCompleteTextView?,
@@ -314,6 +327,11 @@ class EditPlanFragment : Fragment() {
         updateEndDayOptions()
     }
 
+
+    /**
+     * @param 下方为工具区域
+     */
+
     private fun simpleAdapter(items: List<String>): ArrayAdapter<String> {
         return ArrayAdapter(
             requireContext(),
@@ -322,6 +340,7 @@ class EditPlanFragment : Fragment() {
         )
     }
 
+    // 获取月中的天数
     private fun getDaysInMonth(year: Int, month: Int): Int {
         return when (month) {
             1, 3, 5, 7, 8, 10, 12 -> 31
@@ -329,10 +348,12 @@ class EditPlanFragment : Fragment() {
             2 -> {
                 if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) 29 else 28
             }
+
             else -> 30
         }
     }
 
+    // 生成日期文本
     private fun buildDateText(year: String?, month: String?, day: String?): String? {
         val y = year?.toIntOrNull() ?: return null
         val m = month?.toIntOrNull() ?: return null
@@ -340,7 +361,4 @@ class EditPlanFragment : Fragment() {
         return String.format("%04d-%02d-%02d", y, m, d)
     }
 
-    private fun toast(text: String) {
-        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
-    }
 }

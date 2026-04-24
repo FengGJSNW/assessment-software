@@ -14,7 +14,7 @@ import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.model.Plan
 import com.example.xiaomingassistant.data.session.SessionManager
-import com.example.xiaomingassistant.ui.content_display.card.TaskDisplayCardView
+import com.example.xiaomingassistant.ui.component.TaskDisplayCardView
 import com.google.android.material.card.MaterialCardView
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

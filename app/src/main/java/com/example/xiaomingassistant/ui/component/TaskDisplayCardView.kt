@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.ui.content_display.card
+package com.example.xiaomingassistant.ui.component
 
 import android.content.Context
 import android.content.res.ColorStateList

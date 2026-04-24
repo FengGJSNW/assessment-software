@@ -9,6 +9,7 @@ import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
 import com.google.android.material.textfield.TextInputEditText
 
 class NotesEditActivity : BaseActivity() {
@@ -153,7 +154,7 @@ class NotesEditActivity : BaseActivity() {
             .setNegativeButton("取消", null)
             .create()
 
-        styleDialog(dialog)
+        dialog.applyRoundedStyle()
     }
 
     companion object {

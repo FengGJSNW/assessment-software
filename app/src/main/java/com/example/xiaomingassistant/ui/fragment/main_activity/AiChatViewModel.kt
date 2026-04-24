@@ -3,10 +3,10 @@ package com.example.xiaomingassistant.ui.fragment.main_activity
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.xiaomingassistant.data.ai.AiChatRepository
-import com.example.xiaomingassistant.data.ai.AiSessionStorage
-import com.example.xiaomingassistant.data.ai.AiUiMessage
-import com.example.xiaomingassistant.data.ai.ChatMessage
+import com.example.xiaomingassistant.data.repository.AiChatRepository
+import com.example.xiaomingassistant.data.session.AiSessionStorage
+import com.example.xiaomingassistant.data.model.AiUiMessage
+import com.example.xiaomingassistant.data.model.ChatMessage
 import com.example.xiaomingassistant.data.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

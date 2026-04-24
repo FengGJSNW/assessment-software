@@ -1,4 +1,4 @@
-package com.example.xiaomingassistant.data.ai
+package com.example.xiaomingassistant.data.model
 
 data class ChatMessage(
     val role: String,   // system / user / assistant

@@ -7,84 +7,74 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class NotesDbHelper(context: Context) : SQLiteOpenHelper(
     context,
-    DATABASE_NAME,
+    "notes.db",
     null,
-    DATABASE_VERSION
+    3
 ) {
 
     override fun onConfigure(db: SQLiteDatabase) {
         super.onConfigure(db)
+        // 开启外键约束支持
         db.setForeignKeyConstraintsEnabled(true)
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-            """
-            CREATE TABLE $TABLE_CATEGORY (
-                $CATEGORY_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $CATEGORY_USER_ID INTEGER NOT NULL,
-                $CATEGORY_NAME TEXT NOT NULL,
-                $CATEGORY_CREATED_AT INTEGER NOT NULL,
-                UNIQUE($CATEGORY_USER_ID, $CATEGORY_NAME)
+        /**
+         * @param 笔记分类表
+         * user_id: 区分不同用户的分类。
+         * name: 分类名称
+         * created_at: 存储的是 Unix 时间戳（毫秒），记录分类创建时间。
+         */
+        db.execSQL("""
+            CREATE TABLE note_categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                UNIQUE(user_id, name)
             )
-            """.trimIndent()
-        )
+        """.trimIndent())
 
-        db.execSQL(
-            """
-            CREATE TABLE $TABLE_NOTE (
-                $NOTE_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $NOTE_USER_ID INTEGER NOT NULL,
-                $NOTE_CATEGORY_ID INTEGER NOT NULL,
-                $NOTE_TITLE TEXT NOT NULL,
-                $NOTE_CONTENT TEXT NOT NULL,
-                $NOTE_CREATED_AT INTEGER NOT NULL,
-                $NOTE_UPDATED_AT INTEGER NOT NULL,
-                FOREIGN KEY($NOTE_CATEGORY_ID) REFERENCES $TABLE_CATEGORY($CATEGORY_ID) ON DELETE RESTRICT
+        /**
+         * @param 笔记正文表
+         * user_id: 归属用户 ID。
+         * category_id: 将笔记关联到特定的分类上。
+         * title & content: 笔记的标题和详细内容。
+         * created_at & updated_at: 分别记录笔记的初次创建时间和最后一次修改时间
+         * FOREIGN KEY(...) ON DELETE RESTRICT: 如果某个分类下还有笔记，那么阻止删除
+         */
+        db.execSQL("""
+            CREATE TABLE notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                category_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                FOREIGN KEY(category_id) REFERENCES note_categories(id) ON DELETE RESTRICT
             )
-            """.trimIndent()
-        )
+        """.trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NOTE")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_CATEGORY")
+        db.execSQL("DROP TABLE IF EXISTS notes")
+        db.execSQL("DROP TABLE IF EXISTS note_categories")
         onCreate(db)
     }
 
+    // 确保每个用户都有一个默认分类
     fun ensureDefaultCategory(userId: Long) {
-        val db = writableDatabase
         val values = ContentValues().apply {
-            put(CATEGORY_USER_ID, userId)
-            put(CATEGORY_NAME, "未分类")
-            put(CATEGORY_CREATED_AT, System.currentTimeMillis())
+            put("user_id", userId)
+            put("name", "未分类")
+            put("created_at", System.currentTimeMillis())
         }
-        db.insertWithOnConflict(
-            TABLE_CATEGORY,
+        writableDatabase.insertWithOnConflict(
+            "note_categories",
             null,
             values,
             SQLiteDatabase.CONFLICT_IGNORE
         )
-    }
-
-    companion object {
-        const val DATABASE_NAME = "notes.db"
-        const val DATABASE_VERSION = 3
-
-        const val TABLE_CATEGORY = "note_categories"
-        const val TABLE_NOTE = "notes"
-
-        const val CATEGORY_ID = "id"
-        const val CATEGORY_USER_ID = "user_id"
-        const val CATEGORY_NAME = "name"
-        const val CATEGORY_CREATED_AT = "created_at"
-
-        const val NOTE_ID = "id"
-        const val NOTE_USER_ID = "user_id"
-        const val NOTE_CATEGORY_ID = "category_id"
-        const val NOTE_TITLE = "title"
-        const val NOTE_CONTENT = "content"
-        const val NOTE_CREATED_AT = "created_at"
-        const val NOTE_UPDATED_AT = "updated_at"
     }
 }

@@ -44,12 +44,12 @@ class UserRepository(context: Context) {
         val db = dbHelper.writableDatabase
 
         val values = ContentValues().apply {
-            put(AppDatabaseHelper.COL_USERNAME, cleanUsername)
-            put(AppDatabaseHelper.COL_PASSWORD, cleanPassword)
+            put("username", cleanUsername)
+            put("password", cleanPassword)
         }
 
-        val rowId = db.insert(AppDatabaseHelper.TABLE_USER, null, values)
-        db.close()
+        // 使用 "user" 作为表名，对应 AppDatabaseHelper 中的表名
+        val rowId = db.insert("user", null, values)
 
         return if (rowId != -1L) {
             RegisterResult.Success
@@ -82,10 +82,11 @@ class UserRepository(context: Context) {
     fun isUsernameExists(username: String): Boolean {
         val db = dbHelper.readableDatabase
 
+        // 这里的表名和列名均改为字符串硬编码
         val cursor = db.query(
-            AppDatabaseHelper.TABLE_USER,
-            arrayOf(AppDatabaseHelper.COL_USER_ID),
-            "${AppDatabaseHelper.COL_USERNAME} = ?",
+            "user",
+            arrayOf("id"),
+            "username = ?",
             arrayOf(username),
             null,
             null,
@@ -93,10 +94,7 @@ class UserRepository(context: Context) {
         )
 
         val exists = cursor.moveToFirst()
-
         cursor.close()
-        db.close()
-
         return exists
     }
 
@@ -104,13 +102,9 @@ class UserRepository(context: Context) {
         val db = dbHelper.readableDatabase
 
         val cursor = db.query(
-            AppDatabaseHelper.TABLE_USER,
-            arrayOf(
-                AppDatabaseHelper.COL_USER_ID,
-                AppDatabaseHelper.COL_USERNAME,
-                AppDatabaseHelper.COL_PASSWORD
-            ),
-            "${AppDatabaseHelper.COL_USERNAME} = ?",
+            "user",
+            arrayOf("id", "username", "password"),
+            "username = ?",
             arrayOf(username),
             null,
             null,
@@ -118,9 +112,9 @@ class UserRepository(context: Context) {
         )
 
         val user = if (cursor.moveToFirst()) {
-            val id = cursor.getLong(cursor.getColumnIndexOrThrow(AppDatabaseHelper.COL_USER_ID))
-            val name = cursor.getString(cursor.getColumnIndexOrThrow(AppDatabaseHelper.COL_USERNAME))
-            val password = cursor.getString(cursor.getColumnIndexOrThrow(AppDatabaseHelper.COL_PASSWORD))
+            val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow("username"))
+            val password = cursor.getString(cursor.getColumnIndexOrThrow("password"))
 
             User(
                 id = id,
@@ -132,8 +126,6 @@ class UserRepository(context: Context) {
         }
 
         cursor.close()
-        db.close()
-
         return user
     }
 }

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import com.example.xiaomingassistant.data.repository.WeatherRepository
-import com.example.xiaomingassistant.location.LocationRepository
+import com.example.xiaomingassistant.location.LocationHelper
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.amap.api.location.AMapLocationClient
 
@@ -24,7 +24,7 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var minDegreeText: TextView
 
     private val weatherRepository = WeatherRepository()
-    private lateinit var locationRepository: LocationRepository
+    private lateinit var locationHelper: LocationHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class WeatherActivity : AppCompatActivity() {
         AMapLocationClient.updatePrivacyShow(this, true, true)
         AMapLocationClient.updatePrivacyAgree(this, true)
 
-        locationRepository = LocationRepository(this)
+        locationHelper = LocationHelper(this)
 
         requestLocationAndLoadWeather()
     }
@@ -68,7 +68,7 @@ class WeatherActivity : AppCompatActivity() {
             return
         }
 
-        locationRepository.locateOnce(
+        locationHelper.locateOnce(
             onSuccess = { result ->
                 Log.d("LOC_FLOW", "result.city=${result.city}")
                 Log.d("LOC_FLOW", "result.district=${result.district}")
@@ -120,6 +120,6 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        locationRepository.destroy()
+        locationHelper.destroy()
     }
 }

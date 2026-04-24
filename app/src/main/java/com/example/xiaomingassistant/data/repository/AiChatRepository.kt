@@ -1,5 +1,6 @@
-package com.example.xiaomingassistant.data.ai
+package com.example.xiaomingassistant.data.repository
 
+import com.example.xiaomingassistant.data.model.ChatMessage
 import com.example.xiaomingassistant.network.deepseek.DeepSeekChatRequest
 import com.example.xiaomingassistant.network.deepseek.DeepSeekMessage
 import com.example.xiaomingassistant.network.deepseek.DeepSeekNetwork

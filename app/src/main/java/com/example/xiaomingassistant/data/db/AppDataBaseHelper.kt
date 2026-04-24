@@ -6,37 +6,31 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class AppDatabaseHelper(context: Context) : SQLiteOpenHelper(
     context,
-    DATABASE_NAME,
+    "app.db",
     null,
-    DATABASE_VERSION
+    1
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(CREATE_USER_TABLE)
+        db.execSQL(
+            /**
+             * @param 学习计划主表
+             * id 自增主键
+             * username 用户名
+             * password 密码
+             */
+            """
+            CREATE TABLE user (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL
+            )
+            """.trimIndent()
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // 学习阶段先用最简单的方式：删表重建
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_USER")
+        db.execSQL("DROP TABLE IF EXISTS user")
         onCreate(db)
-    }
-
-    companion object {
-        private const val DATABASE_NAME = "app.db"
-        private const val DATABASE_VERSION = 1
-
-        const val TABLE_USER = "user"
-
-        const val COL_USER_ID = "id"
-        const val COL_USERNAME = "username"
-        const val COL_PASSWORD = "password"
-
-        private val CREATE_USER_TABLE = """
-            CREATE TABLE $TABLE_USER (
-                $COL_USER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COL_USERNAME TEXT NOT NULL UNIQUE,
-                $COL_PASSWORD TEXT NOT NULL
-            )
-        """.trimIndent()
     }
 }

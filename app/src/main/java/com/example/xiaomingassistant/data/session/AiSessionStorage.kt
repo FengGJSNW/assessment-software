@@ -1,6 +1,7 @@
-package com.example.xiaomingassistant.data.ai
+package com.example.xiaomingassistant.data.session
 
 import android.content.Context
+import com.example.xiaomingassistant.data.model.ChatMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -11,27 +11,29 @@ class NotesRepository(context: Context) {
 
     private val dbHelper = NotesDbHelper(context.applicationContext)
 
+    /* 获取所有分类信息 */
     fun getAllCategories(userId: Long): List<NoteCategory> {
+        // 确保有“未分类”
         dbHelper.ensureDefaultCategory(userId)
 
         val db = dbHelper.readableDatabase
         val result = mutableListOf<NoteCategory>()
 
         db.query(
-            NotesDbHelper.TABLE_CATEGORY,
+            "note_categories",
             null,
-            "${NotesDbHelper.CATEGORY_USER_ID} = ?",
+            "user_id = ?",
             arrayOf(userId.toString()),
             null,
             null,
-            "${NotesDbHelper.CATEGORY_CREATED_AT} ASC"
+            "created_at ASC"
         ).use { cursor ->
             while (cursor.moveToNext()) {
                 result.add(
                     NoteCategory(
-                        id = cursor.getLong(cursor.getColumnIndexOrThrow(NotesDbHelper.CATEGORY_ID)),
-                        name = cursor.getString(cursor.getColumnIndexOrThrow(NotesDbHelper.CATEGORY_NAME)),
-                        createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(NotesDbHelper.CATEGORY_CREATED_AT))
+                        id = cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                        name = cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                        createdAt = cursor.getLong(cursor.getColumnIndexOrThrow("created_at"))
                     )
                 )
             }
@@ -39,38 +41,40 @@ class NotesRepository(context: Context) {
         return result
     }
 
+    /* 添加分类 */
     fun addCategory(userId: Long, name: String): Boolean {
         val realName = name.trim()
         if (realName.isBlank()) return false
 
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
-            put(NotesDbHelper.CATEGORY_USER_ID, userId)
-            put(NotesDbHelper.CATEGORY_NAME, realName)
-            put(NotesDbHelper.CATEGORY_CREATED_AT, System.currentTimeMillis())
+            put("user_id", userId)
+            put("name", realName)
+            put("created_at", System.currentTimeMillis())
         }
 
         return try {
-            db.insertOrThrow(NotesDbHelper.TABLE_CATEGORY, null, values) > 0
+            db.insertOrThrow("note_categories", null, values) > 0
         } catch (_: SQLiteConstraintException) {
             false
         }
     }
 
+    /* 重命名分类 */
     fun renameCategory(userId: Long, categoryId: Long, newName: String): Boolean {
         val realName = newName.trim()
         if (realName.isBlank()) return false
 
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
-            put(NotesDbHelper.CATEGORY_NAME, realName)
+            put("name", realName)
         }
 
         return try {
             db.update(
-                NotesDbHelper.TABLE_CATEGORY,
+                "note_categories",
                 values,
-                "${NotesDbHelper.CATEGORY_ID} = ? AND ${NotesDbHelper.CATEGORY_USER_ID} = ?",
+                "id = ? AND user_id = ?",
                 arrayOf(categoryId.toString(), userId.toString())
             ) > 0
         } catch (_: SQLiteConstraintException) {
@@ -78,14 +82,16 @@ class NotesRepository(context: Context) {
         }
     }
 
+    /* 删除分类 */
     fun deleteCategory(userId: Long, categoryId: Long): Boolean {
         val db = dbHelper.writableDatabase
 
+        // 检查分类下是否有笔记
         db.rawQuery(
             """
-            SELECT COUNT(*) FROM ${NotesDbHelper.TABLE_NOTE}
-            WHERE ${NotesDbHelper.NOTE_CATEGORY_ID} = ?
-              AND ${NotesDbHelper.NOTE_USER_ID} = ?
+            SELECT COUNT(*) FROM notes
+            WHERE category_id = ?
+              AND user_id = ?
             """.trimIndent(),
             arrayOf(categoryId.toString(), userId.toString())
         ).use { cursor ->
@@ -96,31 +102,29 @@ class NotesRepository(context: Context) {
         }
 
         return db.delete(
-            NotesDbHelper.TABLE_CATEGORY,
-            "${NotesDbHelper.CATEGORY_ID} = ? AND ${NotesDbHelper.CATEGORY_USER_ID} = ?",
+            "note_categories",
+            "id = ? AND user_id = ?",
             arrayOf(categoryId.toString(), userId.toString())
         ) > 0
     }
 
+    /* 获取所有笔记 */
     fun getAllNotes(userId: Long): List<NoteItem> {
         val db = dbHelper.readableDatabase
         val result = mutableListOf<NoteItem>()
 
         val sql = """
-            SELECT n.${NotesDbHelper.NOTE_ID},
-                   n.${NotesDbHelper.NOTE_CATEGORY_ID},
-                   c.${NotesDbHelper.CATEGORY_NAME},
-                   n.${NotesDbHelper.NOTE_TITLE},
-                   n.${NotesDbHelper.NOTE_CONTENT},
-                   n.${NotesDbHelper.NOTE_CREATED_AT},
-                   n.${NotesDbHelper.NOTE_UPDATED_AT}
-            FROM ${NotesDbHelper.TABLE_NOTE} n
-            INNER JOIN ${NotesDbHelper.TABLE_CATEGORY} c
-            ON n.${NotesDbHelper.NOTE_CATEGORY_ID} = c.${NotesDbHelper.CATEGORY_ID}
-            WHERE n.${NotesDbHelper.NOTE_USER_ID} = ?
-              AND c.${NotesDbHelper.CATEGORY_USER_ID} = ?
-            ORDER BY c.${NotesDbHelper.CATEGORY_CREATED_AT} ASC,
-                     n.${NotesDbHelper.NOTE_UPDATED_AT} DESC
+            SELECT n.id,
+                   n.category_id,
+                   c.name,
+                   n.title,
+                   n.content,
+                   n.created_at,
+                   n.updated_at
+            FROM notes n
+            INNER JOIN note_categories c ON n.category_id = c.id
+            WHERE n.user_id = ? AND c.user_id = ?
+            ORDER BY c.created_at ASC, n.updated_at DESC
         """.trimIndent()
 
         db.rawQuery(sql, arrayOf(userId.toString(), userId.toString())).use { cursor ->
@@ -138,27 +142,24 @@ class NotesRepository(context: Context) {
                 )
             }
         }
-
         return result
     }
 
+    /* 根据用户 id 获取笔记 */
     fun getNoteById(userId: Long, noteId: Long): NoteItem? {
         val db = dbHelper.readableDatabase
 
         val sql = """
-            SELECT n.${NotesDbHelper.NOTE_ID},
-                   n.${NotesDbHelper.NOTE_CATEGORY_ID},
-                   c.${NotesDbHelper.CATEGORY_NAME},
-                   n.${NotesDbHelper.NOTE_TITLE},
-                   n.${NotesDbHelper.NOTE_CONTENT},
-                   n.${NotesDbHelper.NOTE_CREATED_AT},
-                   n.${NotesDbHelper.NOTE_UPDATED_AT}
-            FROM ${NotesDbHelper.TABLE_NOTE} n
-            INNER JOIN ${NotesDbHelper.TABLE_CATEGORY} c
-            ON n.${NotesDbHelper.NOTE_CATEGORY_ID} = c.${NotesDbHelper.CATEGORY_ID}
-            WHERE n.${NotesDbHelper.NOTE_ID} = ?
-              AND n.${NotesDbHelper.NOTE_USER_ID} = ?
-              AND c.${NotesDbHelper.CATEGORY_USER_ID} = ?
+            SELECT n.id,
+                   n.category_id,
+                   c.name,
+                   n.title,
+                   n.content,
+                   n.created_at,
+                   n.updated_at
+            FROM notes n
+            INNER JOIN note_categories c ON n.category_id = c.id
+            WHERE n.id = ? AND n.user_id = ? AND c.user_id = ?
         """.trimIndent()
 
         db.rawQuery(sql, arrayOf(noteId.toString(), userId.toString(), userId.toString())).use { cursor ->
@@ -177,46 +178,50 @@ class NotesRepository(context: Context) {
         return null
     }
 
+    /* 插入笔记 */
     fun insertNote(userId: Long, categoryId: Long, title: String, content: String): Long {
         val now = System.currentTimeMillis()
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
-            put(NotesDbHelper.NOTE_USER_ID, userId)
-            put(NotesDbHelper.NOTE_CATEGORY_ID, categoryId)
-            put(NotesDbHelper.NOTE_TITLE, title.trim())
-            put(NotesDbHelper.NOTE_CONTENT, content.trim())
-            put(NotesDbHelper.NOTE_CREATED_AT, now)
-            put(NotesDbHelper.NOTE_UPDATED_AT, now)
+            put("user_id", userId)
+            put("category_id", categoryId)
+            put("title", title.trim())
+            put("content", content.trim())
+            put("created_at", now)
+            put("updated_at", now)
         }
-        return db.insert(NotesDbHelper.TABLE_NOTE, null, values)
+        return db.insert("notes", null, values)
     }
 
+    /* 修改笔记 */
     fun updateNote(userId: Long, noteId: Long, categoryId: Long, title: String, content: String): Boolean {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
-            put(NotesDbHelper.NOTE_CATEGORY_ID, categoryId)
-            put(NotesDbHelper.NOTE_TITLE, title.trim())
-            put(NotesDbHelper.NOTE_CONTENT, content.trim())
-            put(NotesDbHelper.NOTE_UPDATED_AT, System.currentTimeMillis())
+            put("category_id", categoryId)
+            put("title", title.trim())
+            put("content", content.trim())
+            put("updated_at", System.currentTimeMillis())
         }
 
         return db.update(
-            NotesDbHelper.TABLE_NOTE,
+            "notes",
             values,
-            "${NotesDbHelper.NOTE_ID} = ? AND ${NotesDbHelper.NOTE_USER_ID} = ?",
+            "id = ? AND user_id = ?",
             arrayOf(noteId.toString(), userId.toString())
         ) > 0
     }
 
+    /* 删除笔记 */
     fun deleteNote(userId: Long, noteId: Long): Boolean {
         val db = dbHelper.writableDatabase
         return db.delete(
-            NotesDbHelper.TABLE_NOTE,
-            "${NotesDbHelper.NOTE_ID} = ? AND ${NotesDbHelper.NOTE_USER_ID} = ?",
+            "notes",
+            "id = ? AND user_id = ?",
             arrayOf(noteId.toString(), userId.toString())
         ) > 0
     }
 
+    /* 根据分类查找笔记，并分好类 */
     fun getNotesGroupedByCategory(userId: Long): List<Pair<NoteCategory, List<NoteItem>>> {
         val categories = getAllCategories(userId)
         val allNotes = getAllNotes(userId)

@@ -6,9 +6,6 @@ import com.example.xiaomingassistant.util.calc.dp
 import com.google.android.material.textfield.TextInputEditText
 
 
-
-
-
 // 让 dialog 的创建可以使用 lambda 表达式
 inline fun Context.DialogBuilder(action: AlertDialog.Builder.() -> Unit): AlertDialog {
     val builder = AlertDialog.Builder(this)

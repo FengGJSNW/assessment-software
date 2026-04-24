@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.xiaomingassistant.data.ai.AiUiMessage
-import com.example.xiaomingassistant.ui.effect.MarkdownHelper
+import com.example.xiaomingassistant.data.model.AiUiMessage
+import com.example.xiaomingassistant.ui.view.Markdown.MarkdownHelper
 import com.google.android.material.card.MaterialCardView
 
 class AiMessageAdapter(
