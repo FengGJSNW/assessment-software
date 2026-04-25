@@ -4,15 +4,20 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
+import com.amap.api.location.AMapLocationClient
+import com.example.xiaomingassistant.data.model.WeatherForecast
 import com.example.xiaomingassistant.data.repository.WeatherRepository
 import com.example.xiaomingassistant.location.LocationHelper
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.calc.dp
 import com.example.xiaomingassistant.util.toast.showShortToast
-import com.amap.api.location.AMapLocationClient
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -22,6 +27,7 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var stateText: TextView
     private lateinit var maxDegreeText: TextView
     private lateinit var minDegreeText: TextView
+    private lateinit var forecastList: LinearLayout
 
     private val weatherRepository = WeatherRepository()
     private lateinit var locationHelper: LocationHelper
@@ -54,6 +60,7 @@ class WeatherActivity : AppCompatActivity() {
         stateText = findViewById(R.id.weather_text_state)
         maxDegreeText = findViewById(R.id.weather_text_max_degree)
         minDegreeText = findViewById(R.id.weather_text_min_degree)
+        forecastList = findViewById(R.id.weather_forecast_list)
     }
 
     // 先请求定位，再根据城市拉取天气数据
@@ -80,13 +87,17 @@ class WeatherActivity : AppCompatActivity() {
                 weatherRepository.getWeather(result.city) { data ->
                     runOnUiThread {
                         if (data != null) {
-                            val tempInt = data.temp.toDoubleOrNull()?.toInt() ?: 0
+                            val tempText = data.temp.toDoubleOrNull()
+                                ?.toInt()
+                                ?.toString()
+                                ?: data.temp.ifBlank { "--" }
 
                             // locationText.text = data.city
-                            degreeText.text = "${tempInt}°"
+                            degreeText.text = "$tempText°"
                             stateText.text = data.wea
-                            maxDegreeText.text = "最高 ${data.max}°"
-                            minDegreeText.text = "最低 ${data.min}°"
+                            maxDegreeText.text = "最高 ${data.max.ifBlank { "--" }}°"
+                            minDegreeText.text = "最低 ${data.min.ifBlank { "--" }}°"
+                            renderForecasts(data.forecasts)
                         } else {
                             showShortToast("天气获取失败")
                         }
@@ -122,5 +133,64 @@ class WeatherActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         locationHelper.destroy()
+    }
+
+    // 将未来三天预报逐行渲染到模糊卡片内
+    private fun renderForecasts(forecasts: List<WeatherForecast>) {
+        forecastList.removeAllViews()
+
+        if (forecasts.isEmpty()) {
+            forecastList.addView(createEmptyForecastView())
+            return
+        }
+
+        forecasts.forEach { forecast ->
+            val itemView = LayoutInflater.from(this)
+                .inflate(R.layout.myview_inner_weather_forecast_day, forecastList, false)
+
+            itemView.findViewById<TextView>(R.id.weather_forecast_date).text = formatForecastDate(forecast.date)
+            itemView.findViewById<TextView>(R.id.weather_forecast_week).text = forecast.week.ifBlank { "--" }
+            itemView.findViewById<TextView>(R.id.weather_forecast_weather).text = formatWeatherText(forecast)
+            itemView.findViewById<TextView>(R.id.weather_forecast_wind).text = formatWindText(forecast)
+            itemView.findViewById<TextView>(R.id.weather_forecast_temp).text = formatTempText(forecast)
+
+            forecastList.addView(itemView)
+        }
+    }
+
+    private fun createEmptyForecastView(): View {
+        return TextView(this).apply {
+            text = "暂无未来三天天气"
+            setTextColor(getColor(R.color.white_alpha80))
+            textSize = 15f
+            setPadding(18.dp, 18.dp, 18.dp, 18.dp)
+        }
+    }
+
+    private fun formatForecastDate(date: String): String {
+        val parts = date.split("-")
+        return if (parts.size == 3) {
+            "${parts[1]}/${parts[2]}"
+        } else {
+            date.ifBlank { "--/--" }
+        }
+    }
+
+    private fun formatWeatherText(forecast: WeatherForecast): String {
+        val dayWeather = forecast.dayWeather.ifBlank { "--" }
+        val nightWeather = forecast.nightWeather.ifBlank { dayWeather }
+        return if (dayWeather == nightWeather) dayWeather else "${dayWeather}转$nightWeather"
+    }
+
+    private fun formatWindText(forecast: WeatherForecast): String {
+        val wind = forecast.dayWind.ifBlank { "风向未知" }
+        val speed = forecast.dayWindSpeed.ifBlank { "风力未知" }
+        return "$wind $speed"
+    }
+
+    private fun formatTempText(forecast: WeatherForecast): String {
+        val dayTemp = forecast.dayTemp.ifBlank { "--" }
+        val nightTemp = forecast.nightTemp.ifBlank { "--" }
+        return "$dayTemp° / $nightTemp°"
     }
 }

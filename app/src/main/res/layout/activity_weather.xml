@@ -71,6 +71,38 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/weather_forecast_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            app:cardBackgroundColor="@color/white_alpha20"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:cardPreventCornerOverlap="false"
+            app:strokeColor="@color/white_alpha30"
+            app:strokeWidth="1dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.example.xiaomingassistant.ui.view.RealtimeBlurView.RealtimeBlurView
+                    android:id="@+id/weather_forecast_blur"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:realtimeBlurRadius="@dimen/global_blur_radius"
+                    app:realtimeOverlayColor="@color/white_alpha20" />
+
+                <LinearLayout
+                    android:id="@+id/weather_forecast_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="6dp" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
 </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
