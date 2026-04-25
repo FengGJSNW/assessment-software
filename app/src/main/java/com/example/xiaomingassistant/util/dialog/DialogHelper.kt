@@ -19,8 +19,8 @@ fun Context.showConfirmDialog(
     message: String,
     positiveText: String = "确定",
     negativeText: String = "取消",
-    onPositive: (() -> Unit)? = null,
-    onNegative: (() -> Unit)? = null
+    onNegative: (() -> Unit)? = null,
+    onPositive: (() -> Unit)? = null
 ): AlertDialog {
     val dialog = DialogBuilder {
         setTitle(title)

@@ -16,6 +16,7 @@ import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
 import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_END_TIME
 import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_START_TIME
 import com.example.xiaomingassistant.util.calc.normalizePlanTime
+import com.example.xiaomingassistant.util.calc.parsePlanTime
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
 import com.example.xiaomingassistant.util.dialog.showConfirmDialog
@@ -242,6 +243,8 @@ class EditPlanFragment : Fragment() {
         when {
             startDate == null -> showShortToast("请完整选择开始日期")
             endDate == null -> showShortToast("请完整选择结束日期")
+            parsePlanTime(startTime) == null -> showShortToast("请输入正确的开始时间，例如 07:30")
+            parsePlanTime(endTime) == null -> showShortToast("请输入正确的结束时间，例如 10:30")
             title.isBlank() -> showShortToast("请输入计划标题")
             else -> {
                 val repo = PlanRepository(requireContext())
