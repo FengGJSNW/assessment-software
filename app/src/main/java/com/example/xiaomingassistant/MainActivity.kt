@@ -2,7 +2,6 @@ package com.example.xiaomingassistant
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.TypedValue
 import androidx.core.view.WindowCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.xiaomingassistant.data.session.SessionManager
@@ -11,27 +10,38 @@ import com.example.xiaomingassistant.ui.component.MainInterfaceBottomBar
 
 class MainActivity : BaseActivity() {
 
+    private lateinit var viewPager: ViewPager2
+    private lateinit var bottomBar: MainInterfaceBottomBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_interface)
 
-        // 全面屏设置
+        setupEdgeToEdge()
+        bindViews()
+        setupViewPager()
+        setupBottomBar()
+    }
+
+    // 全面屏设置
+    private fun setupEdgeToEdge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val controller = WindowCompat.getInsetsController(window, window.decorView)
         controller.isAppearanceLightStatusBars = true
+    }
 
-        val viewPager = findViewById<ViewPager2>(R.id.main_view_pager)
-        val bottomBar = findViewById<MainInterfaceBottomBar>(R.id.main_bottom_bar)
+    // 绑定主页组件
+    private fun bindViews() {
+        viewPager = findViewById(R.id.main_view_pager)
+        bottomBar = findViewById(R.id.main_bottom_bar)
+    }
 
+    // 设置 ViewPager 适配器与页面监听
+    private fun setupViewPager() {
         // 设置 ViewPager 适配器
         val adapter = ViewPagesAdapter(this)
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = 4
-
-        // 底栏点击切页
-        bottomBar.onTabSelectedListener = { index ->
-            viewPager.setCurrentItem(index, true)
-        }
 
         // 页面切换时更新底栏选中状态
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -40,7 +50,13 @@ class MainActivity : BaseActivity() {
                 bottomBar.setCurrentSelectedIndex(position)
             }
         })
+    }
 
+    // 底栏点击切页
+    private fun setupBottomBar() {
+        bottomBar.onTabSelectedListener = { index ->
+            viewPager.setCurrentItem(index, true)
+        }
     }
 
     override fun onStart() {
@@ -55,10 +71,4 @@ class MainActivity : BaseActivity() {
             finish()
         }
     }
-
-    private fun dpToPx(dp: Float): Int = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
-    ).toInt()
-
-
 }

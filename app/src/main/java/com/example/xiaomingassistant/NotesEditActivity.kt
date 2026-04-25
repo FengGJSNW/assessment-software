@@ -3,14 +3,13 @@ package com.example.xiaomingassistant
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
-import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
 import com.google.android.material.textfield.TextInputEditText
+import com.example.xiaomingassistant.util.toast.showShortToast
 
 class NotesEditActivity : BaseActivity() {
 
@@ -36,11 +35,7 @@ class NotesEditActivity : BaseActivity() {
         localSessionManager = SessionManager(this)
         userId = localSessionManager.getUserId()
 
-        topBar = findViewById(R.id.activity_notes_adding_topbar)
-        categoryAutoComplete = findViewById(R.id.activity_notes_adding_category_auto_complete)
-        titleEdit = findViewById(R.id.activity_notes_adding_title_edit)
-        contentEdit = findViewById(R.id.activity_notes_adding_note_edit)
-
+        bindViews()
         editingNoteId = intent.getLongExtra(EXTRA_NOTE_ID, -1L)
 
         loadCategories()
@@ -48,6 +43,15 @@ class NotesEditActivity : BaseActivity() {
         setupTopBar()
     }
 
+    // 绑定笔记编辑页组件
+    private fun bindViews() {
+        topBar = findViewById(R.id.activity_notes_adding_topbar)
+        categoryAutoComplete = findViewById(R.id.activity_notes_adding_category_auto_complete)
+        titleEdit = findViewById(R.id.activity_notes_adding_title_edit)
+        contentEdit = findViewById(R.id.activity_notes_adding_note_edit)
+    }
+
+    // 配置顶部返回、保存和删除入口
     private fun setupTopBar() {
         topBar.clearTopBarLeftIcons()
         topBar.clearTopBarRightIcons()
@@ -69,6 +73,7 @@ class NotesEditActivity : BaseActivity() {
         }
     }
 
+    // 加载分类并同步到下拉选择框
     private fun loadCategories() {
         categories = repository.getAllCategories(userId)
 
@@ -92,6 +97,7 @@ class NotesEditActivity : BaseActivity() {
         }
     }
 
+    // 编辑模式下回填已有笔记内容
     private fun loadEditDataIfNeeded() {
         if (editingNoteId <= 0) return
 
@@ -102,24 +108,25 @@ class NotesEditActivity : BaseActivity() {
         categoryAutoComplete.setText(note.categoryName, false)
     }
 
+    // 保存前统一校验输入内容
     private fun saveNote() {
         val title = titleEdit.text?.toString()?.trim().orEmpty()
         val content = contentEdit.text?.toString()?.trim().orEmpty()
         val categoryName = categoryAutoComplete.text?.toString()?.trim().orEmpty()
 
         if (title.isBlank()) {
-            Toast.makeText(this, "标题不能为空", Toast.LENGTH_SHORT).show()
+            showShortToast("标题不能为空")
             return
         }
 
         if (content.isBlank()) {
-            Toast.makeText(this, "正文不能为空", Toast.LENGTH_SHORT).show()
+            showShortToast("正文不能为空")
             return
         }
 
         val matchedCategory = categories.find { it.name == categoryName }
         if (matchedCategory == null) {
-            Toast.makeText(this, "请先选择有效分类", Toast.LENGTH_SHORT).show()
+            showShortToast("请先选择有效分类")
             return
         }
         selectedCategoryId = matchedCategory.id
@@ -131,30 +138,28 @@ class NotesEditActivity : BaseActivity() {
         }
 
         if (success) {
-            Toast.makeText(this, if (editingNoteId > 0) "修改成功" else "添加成功", Toast.LENGTH_SHORT).show()
+            showShortToast(if (editingNoteId > 0) "修改成功" else "添加成功")
             finish()
         } else {
-            Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+            showShortToast("保存失败")
         }
     }
 
+    // 删除前先做一次二次确认
     private fun showDeleteDialog() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("删除笔记")
-            .setMessage("确定删除这条笔记吗？删除后无法恢复。")
-            .setPositiveButton("删除") { _, _ ->
+        showConfirmDialog(
+            title = "删除笔记",
+            message = "确定删除这条笔记吗？删除后无法恢复。",
+            positiveText = "删除"
+        ) {
                 val success = repository.deleteNote(userId, editingNoteId)
                 if (success) {
-                    Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除成功")
                     finish()
                 } else {
-                    Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除失败")
                 }
             }
-            .setNegativeButton("取消", null)
-            .create()
-
-        dialog.applyRoundedStyle()
     }
 
     companion object {

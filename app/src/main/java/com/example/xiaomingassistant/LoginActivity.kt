@@ -11,10 +11,10 @@ import com.google.android.material.textfield.TextInputEditText
 
 class LoginActivity : BaseActivity() {
 
-    private val accountEdit by lazy { findViewById<TextInputEditText>(R.id.login_text_account) }
-    private val passwordEdit by lazy { findViewById<TextInputEditText>(R.id.login_text_password) }
-    private val loginBtn by lazy { findViewById<MaterialButton>(R.id.login_btn_login) }
-    private val registerText by lazy { findViewById<TextView>(R.id.login_text_register) }
+    private lateinit var accountEdit: TextInputEditText
+    private lateinit var passwordEdit: TextInputEditText
+    private lateinit var loginBtn: MaterialButton
+    private lateinit var registerText: TextView
 
     private val userRepository by lazy { UserRepository(this) }
 
@@ -25,7 +25,16 @@ class LoginActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.account_login_interface)
 
+        bindViews()
         setupListeners()
+    }
+
+    // 绑定登录页组件
+    private fun bindViews() {
+        accountEdit = findViewById(R.id.login_text_account)
+        passwordEdit = findViewById(R.id.login_text_password)
+        loginBtn = findViewById(R.id.login_btn_login)
+        registerText = findViewById(R.id.login_text_register)
     }
 
     // 绑定按钮事件
@@ -46,11 +55,11 @@ class LoginActivity : BaseActivity() {
         val password = passwordEdit.text?.toString().orEmpty()
 
         if (username.isEmpty()) {
-            showShortToast(this, "用户名不能为空")
+            showShortToast("用户名不能为空")
             return
         }
         if (password.isEmpty()) {
-            showShortToast(this, "密码不能为空")
+            showShortToast("密码不能为空")
             return
         }
 
@@ -69,7 +78,7 @@ class LoginActivity : BaseActivity() {
             UserRepository.LoginResult.WrongPassword -> "密码错误"
         }
 
-        showShortToast(this, message)
+        showShortToast(message)
     }
 
     private fun performLoginSuccess(result: UserRepository.LoginResult.Success) {

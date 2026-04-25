@@ -6,6 +6,8 @@ data class Plan(
     val title: String,
     val startDate: String,
     val endDate: String,
+    val startTime: String = "",
+    val endTime: String = "",
     val note: String,
     val isFinished: Int = 0
 )

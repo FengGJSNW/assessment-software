@@ -5,13 +5,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import com.example.xiaomingassistant.data.repository.WeatherRepository
 import com.example.xiaomingassistant.location.LocationHelper
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.toast.showShortToast
 import com.amap.api.location.AMapLocationClient
 
 class WeatherActivity : AppCompatActivity() {
@@ -29,7 +29,7 @@ class WeatherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-        initViews()
+        bindViews()
 
         // 全面屏适配
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -46,8 +46,8 @@ class WeatherActivity : AppCompatActivity() {
     }
 
 
-
-    private fun initViews() {
+    // 绑定天气页需要展示的文本组件
+    private fun bindViews() {
         topBarView = findViewById(R.id.weather_topbar_container)
         locationText = findViewById(R.id.weather_text_location)
         degreeText = findViewById(R.id.weather_text_degree)
@@ -56,6 +56,7 @@ class WeatherActivity : AppCompatActivity() {
         minDegreeText = findViewById(R.id.weather_text_min_degree)
     }
 
+    // 先请求定位，再根据城市拉取天气数据
     private fun requestLocationAndLoadWeather() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
@@ -87,7 +88,7 @@ class WeatherActivity : AppCompatActivity() {
                             maxDegreeText.text = "最高 ${data.max}°"
                             minDegreeText.text = "最低 ${data.min}°"
                         } else {
-                            Toast.makeText(this, "天气获取失败", Toast.LENGTH_SHORT).show()
+                            showShortToast("天气获取失败")
                         }
                     }
                 }
@@ -95,7 +96,7 @@ class WeatherActivity : AppCompatActivity() {
             onError = { msg ->
                 Log.e("LOC_FLOW", "location error=$msg")
                 runOnUiThread {
-                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                    showShortToast(msg)
                 }
             }
         )
@@ -114,7 +115,7 @@ class WeatherActivity : AppCompatActivity() {
         ) {
             requestLocationAndLoadWeather()
         } else {
-            Toast.makeText(this, "没有定位权限", Toast.LENGTH_SHORT).show()
+            showShortToast("没有定位权限")
         }
     }
 

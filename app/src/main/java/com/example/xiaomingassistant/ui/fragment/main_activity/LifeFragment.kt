@@ -10,16 +10,25 @@ import com.example.xiaomingassistant.ui.view.MySettingCard
 
 class LifeFragment : Fragment(R.layout.main_interface_life) {
 
+    private lateinit var weatherCard: MySettingCard
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val gotoWeather = view.findViewById<MySettingCard>(R.id.life_card_weather)
+        bindViews(view)
+        setupListeners()
+    }
 
-        gotoWeather.setOnClickListener {
+    // 绑定生活页组件
+    private fun bindViews(view: View) {
+        weatherCard = view.findViewById(R.id.life_card_weather)
+    }
+
+    // 绑定天气入口
+    private fun setupListeners() {
+        weatherCard.setOnClickListener {
             val intent = Intent(requireContext(), WeatherActivity::class.java)
             startActivity(intent)
         }
-
-
     }
 }

@@ -2,7 +2,6 @@ package com.example.xiaomingassistant.ui.fragment.main_activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -15,21 +14,31 @@ import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.model.Plan
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.component.TaskDisplayCardView
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_END_TIME
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_START_TIME
+import com.example.xiaomingassistant.util.calc.PlanPointState
+import com.example.xiaomingassistant.util.calc.dp
+import com.example.xiaomingassistant.util.calc.formatPlanTimeLabel
+import com.example.xiaomingassistant.util.calc.isDateInRange
+import com.example.xiaomingassistant.util.calc.normalizePlanTime
+import com.example.xiaomingassistant.util.calc.resolvePlanPointState
+import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.LocalTime
 
 class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
-    private var cardLeft: MaterialCardView? = null
-    private var cardRightTop: MaterialCardView? = null
-    private var cardRightBottom: MaterialCardView? = null
-    private var cardDisplayTask: LinearLayout? = null
+    private lateinit var cardLeft: MaterialCardView
+    private lateinit var cardRightTop: MaterialCardView
+    private lateinit var cardRightBottom: MaterialCardView
+    private lateinit var cardDisplayTask: LinearLayout
 
-    private var keepDaysText: TextView? = null
-    private var finishedCountText: TextView? = null
+    private lateinit var keepDaysText: TextView
+    private lateinit var finishedCountText: TextView
 
-    private var repository: PlanRepository? = null
+    private lateinit var repository: PlanRepository
 
     private lateinit var sessionManager: SessionManager
     private var userId: Long = -1L
@@ -52,6 +61,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         renderPlanList()
     }
 
+    // 绑定学习计划首页组件
     private fun bindViews(view: View) {
         cardLeft = view.findViewById(R.id.skillstudy_card_top_left)
         cardRightTop = view.findViewById(R.id.skillstudy_card_top_right_1)
@@ -62,62 +72,61 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         finishedCountText = view.findViewById(R.id.skillstudy_edit_right_top_card_tv_task_count)
     }
 
+    // 让左侧方卡和右侧两张小卡保持成套比例
     private fun setupCardLayout() {
-        val left = cardLeft ?: return
-        val rightTop = cardRightTop ?: return
-        val rightBottom = cardRightBottom ?: return
+        cardLeft.post {
+            val width = cardLeft.width
+            val margin = 12.dp
 
-        left.post {
-            val width = left.width
-            val margin = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                12f,
-                resources.displayMetrics
-            ).toInt()
-
-            left.updateLayoutParams {
+            cardLeft.updateLayoutParams {
                 height = width
             }
 
             val smallHeight = (width - margin) / 2
-            rightTop.updateLayoutParams {
+            cardRightTop.updateLayoutParams {
                 height = smallHeight
             }
-            rightBottom.updateLayoutParams {
+            cardRightBottom.updateLayoutParams {
                 height = smallHeight
             }
         }
     }
 
+    // 点击左上角卡片进入计划编辑页
     private fun setupClickEvents() {
-        cardLeft?.setOnClickListener {
+        cardLeft.setOnClickListener {
             val intent = Intent(requireContext(), PlanEditingActivity::class.java)
             startActivity(intent)
         }
     }
 
+    // 刷新计划列表，并根据状态设置卡片颜色
     private fun renderPlanList() {
-        val container = cardDisplayTask ?: return
-        val repo = repository ?: return
-
-        val list = repo.getAll(userId)
         val today = LocalDate.now().toString()
+        val list = repository.getAll(userId).filter { plan ->
+            isDateInRange(today, plan.startDate, plan.endDate)
+        }
 
-        updateStatistics()
+        updateStatistics(today, list)
 
-        container.removeAllViews()
+        cardDisplayTask.removeAllViews()
+
+        if (list.isEmpty()) {
+            cardDisplayTask.addView(createHintCard("今日暂无日期区间内的计划"))
+            return
+        }
 
         for (plan in list) {
             val taskCard = TaskDisplayCardView(requireContext())
 
-            val pointColorRes = getPointColorRes(plan, today, repo)
+            val pointColorRes = getPointColorRes(plan, today)
 
             taskCard.setTaskData(
                 pointColor = ContextCompat.getColor(requireContext(), pointColorRes),
                 title = plan.title,
                 dateRange = "${plan.startDate} ~ ${plan.endDate}",
-                startTime = "开始 ${plan.startDate}",
-                endTime = "结束 ${plan.endDate}",
+                startTime = formatPlanTimeLabel("开始", normalizePlanTime(plan.startTime, DEFAULT_PLAN_START_TIME)),
+                endTime = formatPlanTimeLabel("结束", normalizePlanTime(plan.endTime, DEFAULT_PLAN_END_TIME)),
                 content = if (plan.note.isBlank()) "暂无备注" else plan.note
             )
 
@@ -125,46 +134,49 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
                 showPlanActionDialog(plan, today)
             }
 
-            container.addView(taskCard)
+            cardDisplayTask.addView(taskCard)
         }
     }
 
-    private fun updateStatistics() {
-        val repo = repository ?: return
-
-        val earliestDateText = repo.getEarliestStartDate(userId)
-        val finishedTotal = repo.getFinishedTotalCount(userId)
-
-        val keepDays = if (earliestDateText.isNullOrBlank()) {
-            0
-        } else {
-            try {
-                val startDate = LocalDate.parse(earliestDateText)
-                (ChronoUnit.DAYS.between(startDate, LocalDate.now()) + 1)
-                    .toInt()
-                    .coerceAtLeast(0)
-            } catch (e: Exception) {
-                0
-            }
+    // 更新坚持天数与已完成任务数
+    private fun updateStatistics(today: String, plans: List<Plan>) {
+        val finishedTotal = repository.getFinishedTotalCount(userId)
+        val allFinishedToday = plans.isNotEmpty() && plans.all { plan ->
+            isPlanCompletedToday(plan, today)
         }
 
-        keepDaysText?.text = keepDays.toString()
-        finishedCountText?.text = finishedTotal.toString()
+        val keepDays = repository.syncKeepDays(userId, today, allFinishedToday)
+
+        keepDaysText.text = keepDays.toString()
+        finishedCountText.text = finishedTotal.toString()
     }
 
-    private fun getPointColorRes(plan: Plan, today: String, repo: PlanRepository): Int {
-        return when {
-            repo.isFinishedToday(userId, plan.id, today) -> R.color.point_green
-            today < plan.startDate -> R.color.point_yellow
-            else -> R.color.point_red
+    // 判断某条计划今天是否已经完成
+    private fun isPlanCompletedToday(plan: Plan, today: String): Boolean {
+        return plan.isFinished == 1 || repository.isFinishedToday(userId, plan.id, today)
+    }
+
+    // 根据计划当天状态返回不同的提示颜色
+    private fun getPointColorRes(plan: Plan, today: String): Int {
+        val state = resolvePlanPointState(
+            nowTime = LocalTime.now(),
+            startTimeText = normalizePlanTime(plan.startTime, DEFAULT_PLAN_START_TIME),
+            endTimeText = normalizePlanTime(plan.endTime, DEFAULT_PLAN_END_TIME),
+            isFinished = isPlanCompletedToday(plan, today)
+        )
+
+        return when (state) {
+            PlanPointState.YELLOW -> R.color.point_yellow
+            PlanPointState.RED -> R.color.point_red
+            PlanPointState.GREEN -> R.color.point_green
         }
     }
 
+    // 点击任务卡片后弹出操作菜单
     private fun showPlanActionDialog(plan: Plan, today: String) {
-        val repo = repository ?: return
-        val finishedToday = repo.isFinishedToday(userId, plan.id, today)
+        val finishedToday = repository.isFinishedToday(userId, plan.id, today)
 
-        val builder = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle("任务：${plan.title}")
             .setMessage(
                 if (finishedToday) {
@@ -177,12 +189,12 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
         if (finishedToday) {
             builder.setNegativeButton("撤销单日完成") { _, _ ->
-                repo.unmarkFinishedToday(userId, plan.id, today)
+                repository.unmarkFinishedToday(userId, plan.id, today)
                 renderPlanList()
             }
         } else {
             builder.setNegativeButton("单日完成") { _, _ ->
-                repo.markFinishedToday(userId, plan.id, today)
+                repository.markFinishedToday(userId, plan.id, today)
                 renderPlanList()
             }
         }
@@ -195,14 +207,13 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         styleDialog(dialog)
     }
 
+    // 将任务标记为全部完成前再次确认
     private fun showDeleteConfirmDialog(planId: Long, title: String) {
-        val repo = repository ?: return
-
-        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("确认全部完成")
             .setMessage("任务「$title」全部完成后会被删除，且无法恢复。")
             .setPositiveButton("确认完成") { _, _ ->
-                repo.deleteAsFinished(userId, planId)
+                repository.deleteAsFinished(userId, planId)
                 renderPlanList()
             }
             .setNegativeButton("再想想", null)
@@ -211,24 +222,21 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         styleDialog(dialog)
     }
 
+    // 统一应用项目里的圆角弹窗样式
     private fun styleDialog(dialog: androidx.appcompat.app.AlertDialog) {
-        dialog.show()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
-
-        val textColor = requireContext().getColor(R.color.black)
-
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
+        dialog.applyRoundedStyle()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        cardLeft = null
-        cardRightTop = null
-        cardRightBottom = null
-        cardDisplayTask = null
-        keepDaysText = null
-        finishedCountText = null
+    // 没有今日计划时给出轻量提示
+    private fun createHintCard(message: String): View {
+        return TextView(requireContext()).apply {
+            text = message
+            setTextColor(0xFF666666.toInt())
+            setPadding(16.dp, 16.dp, 16.dp, 16.dp)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
     }
 }

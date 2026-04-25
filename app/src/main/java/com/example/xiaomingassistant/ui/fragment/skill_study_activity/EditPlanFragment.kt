@@ -13,27 +13,31 @@ import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.model.Plan
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_END_TIME
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_START_TIME
+import com.example.xiaomingassistant.util.calc.normalizePlanTime
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
-import com.example.xiaomingassistant.util.dialog.DialogBuilder
-import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
 import com.example.xiaomingassistant.util.toast.showShortToast
 
 
 class EditPlanFragment : Fragment() {
 
-    private var topBarWithScrollView: TopBarWithScrollView? = null
+    private lateinit var topBarWithScrollView: TopBarWithScrollView
 
-    private var startYearView: AutoCompleteTextView? = null
-    private var startMonthView: AutoCompleteTextView? = null
-    private var startDayView: AutoCompleteTextView? = null
+    private lateinit var startYearView: AutoCompleteTextView
+    private lateinit var startMonthView: AutoCompleteTextView
+    private lateinit var startDayView: AutoCompleteTextView
 
-    private var endYearView: AutoCompleteTextView? = null
-    private var endMonthView: AutoCompleteTextView? = null
-    private var endDayView: AutoCompleteTextView? = null
+    private lateinit var endYearView: AutoCompleteTextView
+    private lateinit var endMonthView: AutoCompleteTextView
+    private lateinit var endDayView: AutoCompleteTextView
 
-    private var titleEditText: TextInputEditText? = null
-    private var noteEditText: TextInputEditText? = null
+    private lateinit var startTimeEditText: TextInputEditText
+    private lateinit var endTimeEditText: TextInputEditText
+    private lateinit var titleEditText: TextInputEditText
+    private lateinit var noteEditText: TextInputEditText
     private var pendingPlanId: Long? = null
     private var editingPlanId: Long? = null
 
@@ -82,8 +86,8 @@ class EditPlanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        topBarWithScrollView?.post {
-            topBarWithScrollView?.refreshLayoutState()
+        topBarWithScrollView.post {
+            topBarWithScrollView.refreshLayoutState()
         }
     }
 
@@ -96,13 +100,13 @@ class EditPlanFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            topBarWithScrollView?.post {
-                topBarWithScrollView?.refreshLayoutState()
+            topBarWithScrollView.post {
+                topBarWithScrollView.refreshLayoutState()
             }
         }
     }
 
-    // 绑定组件
+    // 绑定编辑计划页的所有输入组件
     private fun bindViews(view: View) {
         topBarWithScrollView = view.findViewById(R.id.skillstudy_edit_add_plan_topbar)
 
@@ -114,117 +118,131 @@ class EditPlanFragment : Fragment() {
         endMonthView = view.findViewById(R.id.skillstudy_edit_add_end_month)
         endDayView = view.findViewById(R.id.skillstudy_edit_add_end_day)
 
+        startTimeEditText = view.findViewById(R.id.skillstudy_edit_add_start_time)
+        endTimeEditText = view.findViewById(R.id.skillstudy_edit_add_end_time)
         titleEditText = view.findViewById(R.id.skillstudy_edit_add_title)
         noteEditText = view.findViewById(R.id.skillstudy_edit_add_note)
+
+        startTimeEditText.setText(DEFAULT_PLAN_START_TIME)
+        endTimeEditText.setText(DEFAULT_PLAN_END_TIME)
     }
 
+    // 根据当前模式刷新顶部按钮
     private fun refreshTopBar() {
-        topBarWithScrollView?.clearTopBarLeftIcons()
-        topBarWithScrollView?.clearTopBarRightIcons()
+        topBarWithScrollView.clearTopBarLeftIcons()
+        topBarWithScrollView.clearTopBarRightIcons()
 
-        topBarWithScrollView?.addTopBarLeftIcon(R.drawable.back_arrow) {
+        topBarWithScrollView.addTopBarLeftIcon(R.drawable.back_arrow) {
             (requireActivity() as PlanEditingActivity).showMainFragment()
         }
 
         if (editingPlanId == null) {
-            topBarWithScrollView?.setTitle("添加计划")
-            topBarWithScrollView?.addTopBarRightIcon(R.drawable.plus) {
+            topBarWithScrollView.setTitle("添加计划")
+            topBarWithScrollView.addTopBarRightIcon(R.drawable.plus) {
                 submitPlan()
             }
         } else {
-            topBarWithScrollView?.setTitle("编辑计划")
+            topBarWithScrollView.setTitle("编辑计划")
 
-            topBarWithScrollView?.addTopBarRightIcon(R.drawable.save) {
+            topBarWithScrollView.addTopBarRightIcon(R.drawable.save) {
                 submitPlan()
             }
 
-            topBarWithScrollView?.addTopBarRightIcon(R.drawable.garbage) {
+            topBarWithScrollView.addTopBarRightIcon(R.drawable.garbage) {
                 deletePlan()
             }
         }
     }
 
-    // 初始化滚动输入栏，加入日期
+    // 初始化起止日期的下拉选项
     private fun setupDateDropdowns() {
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
         val years = (currentYear..(currentYear + 100)).map { it.toString() }
         val months = (1..12).map { it.toString() }
 
-        startYearView?.setAdapter(simpleAdapter(years))
-        endYearView?.setAdapter(simpleAdapter(years))
+        startYearView.setAdapter(simpleAdapter(years))
+        endYearView.setAdapter(simpleAdapter(years))
 
-        startMonthView?.setAdapter(simpleAdapter(months))
-        endMonthView?.setAdapter(simpleAdapter(months))
+        startMonthView.setAdapter(simpleAdapter(months))
+        endMonthView.setAdapter(simpleAdapter(months))
 
-        startYearView?.setOnItemClickListener { _, _, _, _ -> updateStartDayOptions() }
-        startMonthView?.setOnItemClickListener { _, _, _, _ -> updateStartDayOptions() }
+        startYearView.setOnItemClickListener { _, _, _, _ -> updateStartDayOptions() }
+        startMonthView.setOnItemClickListener { _, _, _, _ -> updateStartDayOptions() }
 
-        endYearView?.setOnItemClickListener { _, _, _, _ -> updateEndDayOptions() }
-        endMonthView?.setOnItemClickListener { _, _, _, _ -> updateEndDayOptions() }
+        endYearView.setOnItemClickListener { _, _, _, _ -> updateEndDayOptions() }
+        endMonthView.setOnItemClickListener { _, _, _, _ -> updateEndDayOptions() }
 
-        startYearView?.setText(currentYear.toString(), false)
-        endYearView?.setText(currentYear.toString(), false)
-        startMonthView?.setText("1", false)
-        endMonthView?.setText("1", false)
+        startYearView.setText(currentYear.toString(), false)
+        endYearView.setText(currentYear.toString(), false)
+        startMonthView.setText("1", false)
+        endMonthView.setText("1", false)
 
         updateStartDayOptions()
         updateEndDayOptions()
     }
 
     private fun updateStartDayOptions() {
-        val year = startYearView?.text?.toString()?.toIntOrNull()
-        val month = startMonthView?.text?.toString()?.toIntOrNull()
+        val year = startYearView.text?.toString()?.toIntOrNull()
+        val month = startMonthView.text?.toString()?.toIntOrNull()
         if (year == null || month == null) return
 
         val days = (1..getDaysInMonth(year, month)).map { it.toString() }
-        val currentDay = startDayView?.text?.toString()
+        val currentDay = startDayView.text?.toString()
 
-        startDayView?.setAdapter(simpleAdapter(days))
+        startDayView.setAdapter(simpleAdapter(days))
         if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()
                 ?.let { it > days.size } == true
         ) {
-            startDayView?.setText(days.first(), false)
+            startDayView.setText(days.first(), false)
         }
     }
 
     private fun updateEndDayOptions() {
-        val year = endYearView?.text?.toString()?.toIntOrNull()
-        val month = endMonthView?.text?.toString()?.toIntOrNull()
+        val year = endYearView.text?.toString()?.toIntOrNull()
+        val month = endMonthView.text?.toString()?.toIntOrNull()
         if (year == null || month == null) return
 
         val days = (1..getDaysInMonth(year, month)).map { it.toString() }
-        val currentDay = endDayView?.text?.toString()
+        val currentDay = endDayView.text?.toString()
 
-        endDayView?.setAdapter(simpleAdapter(days))
+        endDayView.setAdapter(simpleAdapter(days))
         if (currentDay.isNullOrBlank() || currentDay.toIntOrNull()
                 ?.let { it > days.size } == true
         ) {
-            endDayView?.setText(days.first(), false)
+            endDayView.setText(days.first(), false)
         }
     }
 
-    // 提交计划
+    // 提交前先完成日期和标题校验
     private fun submitPlan() {
         val startDate = buildDateText(
-            startYearView?.text?.toString(),
-            startMonthView?.text?.toString(),
-            startDayView?.text?.toString()
+            startYearView.text?.toString(),
+            startMonthView.text?.toString(),
+            startDayView.text?.toString()
         )
 
         val endDate = buildDateText(
-            endYearView?.text?.toString(),
-            endMonthView?.text?.toString(),
-            endDayView?.text?.toString()
+            endYearView.text?.toString(),
+            endMonthView.text?.toString(),
+            endDayView.text?.toString()
         )
 
-        val title = titleEditText?.text?.toString()?.trim().orEmpty()
-        val note = noteEditText?.text?.toString()?.trim().orEmpty()
+        val title = titleEditText.text?.toString()?.trim().orEmpty()
+        val note = noteEditText.text?.toString()?.trim().orEmpty()
+        val startTime = normalizePlanTime(
+            startTimeEditText.text?.toString().orEmpty(),
+            DEFAULT_PLAN_START_TIME
+        )
+        val endTime = normalizePlanTime(
+            endTimeEditText.text?.toString().orEmpty(),
+            DEFAULT_PLAN_END_TIME
+        )
 
         when {
-            startDate == null -> showShortToast(requireContext(), "请完整选择开始日期")
-            endDate == null -> showShortToast(requireContext(), "请完整选择结束日期")
-            title.isBlank() -> showShortToast(requireContext(), "请输入计划标题")
+            startDate == null -> showShortToast("请完整选择开始日期")
+            endDate == null -> showShortToast("请完整选择结束日期")
+            title.isBlank() -> showShortToast("请输入计划标题")
             else -> {
                 val repo = PlanRepository(requireContext())
 
@@ -235,10 +253,12 @@ class EditPlanFragment : Fragment() {
                             title = title,
                             startDate = startDate,
                             endDate = endDate,
+                            startTime = startTime,
+                            endTime = endTime,
                             note = note
                         )
                     )
-                    showShortToast(requireContext(), "添加成功")
+                    showShortToast("添加成功")
                 } else {
                     repo.update(
                         Plan(
@@ -247,10 +267,12 @@ class EditPlanFragment : Fragment() {
                             title = title,
                             startDate = startDate,
                             endDate = endDate,
+                            startTime = startTime,
+                            endTime = endTime,
                             note = note
                         )
                     )
-                    showShortToast(requireContext(), "保存成功")
+                    showShortToast("保存成功")
                 }
 
                 (requireActivity() as PlanEditingActivity).showMainFragment()
@@ -258,70 +280,72 @@ class EditPlanFragment : Fragment() {
         }
     }
 
-    // 删除计划
+    // 删除计划前弹出确认框
     private fun deletePlan() {
         val planId = editingPlanId ?: return
 
-        val dialog = requireContext().DialogBuilder {
-            setTitle("确认删除")
-            setMessage("确定要删除这个计划吗？删除后无法恢复。")
-            setPositiveButton("确认删除") { _, _ ->
+        requireContext().showConfirmDialog(
+            title = "确认删除",
+            message = "确定要删除这个计划吗？删除后无法恢复。",
+            positiveText = "确认删除"
+        ) {
                 val repo = PlanRepository(requireContext())
                 repo.delete(userId, planId)
-                showShortToast(requireContext(), "删除成功")
+                showShortToast("删除成功")
                 editingPlanId = null
                 (activity as? PlanEditingActivity)?.showMainFragment()
             }
-            setNegativeButton("取消", null)
-        }
-
-        dialog.applyRoundedStyle()
     }
 
-    // 加载计划
+    // 编辑模式下回填计划数据
     private fun loadPlan(planId: Long) {
         val repo = PlanRepository(requireContext())
         val plan = repo.getById(userId, planId) ?: return
 
-        titleEditText?.setText(plan.title)
-        noteEditText?.setText(plan.note)
+        titleEditText.setText(plan.title)
+        noteEditText.setText(plan.note)
+        startTimeEditText.setText(normalizePlanTime(plan.startTime, DEFAULT_PLAN_START_TIME))
+        endTimeEditText.setText(normalizePlanTime(plan.endTime, DEFAULT_PLAN_END_TIME))
 
         applyDateToViews(plan.startDate, startYearView, startMonthView, startDayView)
         applyDateToViews(plan.endDate, endYearView, endMonthView, endDayView)
     }
 
-    // 将日期显示在滚动输入框内
+    // 将数据库中的日期拆开后写回到输入框
     private fun applyDateToViews(
         dateText: String?,
-        yearView: AutoCompleteTextView?,
-        monthView: AutoCompleteTextView?,
-        dayView: AutoCompleteTextView?
+        yearView: AutoCompleteTextView,
+        monthView: AutoCompleteTextView,
+        dayView: AutoCompleteTextView
     ) {
         val parts = dateText?.split("-") ?: return
         if (parts.size != 3) return
 
-        yearView?.setText(parts[0], false)
-        monthView?.setText(parts[1].toIntOrNull()?.toString().orEmpty(), false)
+        yearView.setText(parts[0], false)
+        monthView.setText(parts[1].toIntOrNull()?.toString().orEmpty(), false)
 
         val year = parts[0].toIntOrNull()
         val month = parts[1].toIntOrNull()
         if (year != null && month != null) {
             val days = (1..getDaysInMonth(year, month)).map { it.toString() }
-            dayView?.setAdapter(simpleAdapter(days))
+            dayView.setAdapter(simpleAdapter(days))
         }
 
-        dayView?.setText(parts[2].toIntOrNull()?.toString().orEmpty(), false)
+        dayView.setText(parts[2].toIntOrNull()?.toString().orEmpty(), false)
     }
 
+    // 切回新增模式时清空表单
     private fun clearForm() {
-        titleEditText?.setText("")
-        noteEditText?.setText("")
+        titleEditText.setText("")
+        noteEditText.setText("")
+        startTimeEditText.setText(DEFAULT_PLAN_START_TIME)
+        endTimeEditText.setText(DEFAULT_PLAN_END_TIME)
 
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-        startYearView?.setText(currentYear.toString(), false)
-        endYearView?.setText(currentYear.toString(), false)
-        startMonthView?.setText("1", false)
-        endMonthView?.setText("1", false)
+        startYearView.setText(currentYear.toString(), false)
+        endYearView.setText(currentYear.toString(), false)
+        startMonthView.setText("1", false)
+        endMonthView.setText("1", false)
 
         updateStartDayOptions()
         updateEndDayOptions()

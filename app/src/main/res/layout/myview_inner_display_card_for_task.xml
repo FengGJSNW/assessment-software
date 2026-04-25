@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:textColor="#999999"
             android:textSize="12sp"
-            tools:text="开始 04/15" />
+            tools:text="开始 08:00" />
 
         <TextView
             android:id="@+id/internal_end_time"
@@ -77,7 +77,7 @@
             android:layout_marginTop="8dp"
             android:textColor="#999999"
             android:textSize="12sp"
-            tools:text="结束 04/20" />
+            tools:text="结束 18:00" />
     </LinearLayout>
 
     <TextView

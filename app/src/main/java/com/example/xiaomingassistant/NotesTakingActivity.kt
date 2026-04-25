@@ -3,12 +3,11 @@ package com.example.xiaomingassistant
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
-import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
+import com.example.xiaomingassistant.util.toast.showShortToast
 
 class NotesTakingActivity : BaseActivity() {
 
@@ -31,14 +30,10 @@ class NotesTakingActivity : BaseActivity() {
         localSessionManager = SessionManager(this)
         userId = localSessionManager.getUserId()
 
-        topBar = findViewById(R.id.activity_notes_taking_topbar)
-        titleText = findViewById(R.id.activity_notes_taking_title)
-        categoryText = findViewById(R.id.activity_notes_taking_category)
-        contentText = findViewById(R.id.activity_notes_taking_content)
-
+        bindViews()
         noteId = intent.getLongExtra(EXTRA_NOTE_ID, -1L)
         if (noteId <= 0) {
-            Toast.makeText(this, "笔记不存在", Toast.LENGTH_SHORT).show()
+            showShortToast("笔记不存在")
             finish()
             return
         }
@@ -47,11 +42,20 @@ class NotesTakingActivity : BaseActivity() {
         loadNote()
     }
 
+    // 绑定笔记详情页组件
+    private fun bindViews() {
+        topBar = findViewById(R.id.activity_notes_taking_topbar)
+        titleText = findViewById(R.id.activity_notes_taking_title)
+        categoryText = findViewById(R.id.activity_notes_taking_category)
+        contentText = findViewById(R.id.activity_notes_taking_content)
+    }
+
     override fun onResume() {
         super.onResume()
         loadNote()
     }
 
+    // 顶栏提供返回、编辑和删除操作
     private fun setupTopBar() {
         topBar.clearTopBarLeftIcons()
         topBar.clearTopBarRightIcons()
@@ -71,10 +75,11 @@ class NotesTakingActivity : BaseActivity() {
         }
     }
 
+    // 根据当前 noteId 重新加载最新内容
     private fun loadNote() {
         val note = repository.getNoteById(userId, noteId)
         if (note == null) {
-            Toast.makeText(this, "笔记不存在", Toast.LENGTH_SHORT).show()
+            showShortToast("笔记不存在")
             finish()
             return
         }
@@ -85,23 +90,21 @@ class NotesTakingActivity : BaseActivity() {
         contentText.text = note.content
     }
 
+    // 删除前弹出统一样式确认框
     private fun showDeleteDialog() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("删除笔记")
-            .setMessage("确定删除这条笔记吗？删除后无法恢复。")
-            .setPositiveButton("删除") { _, _ ->
+        showConfirmDialog(
+            title = "删除笔记",
+            message = "确定删除这条笔记吗？删除后无法恢复。",
+            positiveText = "删除"
+        ) {
                 val success = repository.deleteNote(userId, noteId)
                 if (success) {
-                    Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除成功")
                     finish()
                 } else {
-                    Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除失败")
                 }
             }
-            .setNegativeButton("取消", null)
-            .create()
-
-        dialog.applyRoundedStyle()
     }
 
     companion object {

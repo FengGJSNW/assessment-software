@@ -4,17 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.xiaomingassistant.LoginActivity
-import com.example.xiaomingassistant.MainActivity
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.view.MySettingCard
-import com.example.xiaomingassistant.util.dialog.DialogBuilder
-import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
 import com.example.xiaomingassistant.util.toast.showShortToast
-import kotlin.math.log
 
 class SettingsFragment : Fragment(R.layout.main_interface_settings) {
 
@@ -35,7 +31,7 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
         setupListeners()
     }
 
-
+    // 绑定设置页中的各个卡片
     private fun bindViews(view: View) {
         personalizedCard = view.findViewById(R.id.settings_card_personalized)
         nightCard = view.findViewById(R.id.settings_card_night)
@@ -45,6 +41,7 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
         logOutCard = view.findViewById(R.id.settings_card_login)
     }
 
+    // 统一注册设置页点击事件
     private fun setupListeners() {
         // 个性化
         personalizedCard.setOnClickListener {
@@ -61,7 +58,7 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
             try {
                 startActivity(intent)
             } catch (e: Exception) {
-                showShortToast(requireContext(), "无法打开系统设置")
+                showShortToast("无法打开系统设置")
             }
         }
 
@@ -86,22 +83,23 @@ class SettingsFragment : Fragment(R.layout.main_interface_settings) {
         updateLoginCard()
     }
 
+    // 预留登录态变化后的 UI 刷新入口
     private fun updateLoginCard() {
         logOutCard.alpha = 1f
     }
 
+    // 注销前先进行确认
     private fun showLogoutDialog() {
-        requireContext().DialogBuilder {
-            setTitle("注销账号")
-            setMessage("确定注销当前账号吗？注销后需要重新登录。")
-            setPositiveButton("注销") { _, _ ->
+        requireContext().showConfirmDialog(
+            title = "注销账号",
+            message = "确定注销当前账号吗？注销后需要重新登录。",
+            positiveText = "注销"
+        ) {
                 sessionManager.clearLogin()
                 startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 })
                 activity?.finish()
             }
-            setNegativeButton("取消", null)
-        }.applyRoundedStyle()
     }
 }

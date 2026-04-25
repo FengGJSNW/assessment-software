@@ -7,8 +7,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
@@ -18,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.example.xiaomingassistant.util.calc.dp
 import com.example.xiaomingassistant.util.dialog.DialogBuilder
 import com.example.xiaomingassistant.util.dialog.setInputView
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
 import com.example.xiaomingassistant.util.toast.showShortToast
 import com.example.xiaomingassistant.util.dialog.style.applyRoundedStyle
 
@@ -41,11 +40,7 @@ class NotesCategoryManageActivity : BaseActivity() {
         localSessionManager = SessionManager(this)
         userId = localSessionManager.getUserId()
 
-        topBar = findViewById(R.id.activity_notes_classify_topbar)
-        inputEdit = findViewById(R.id.activity_notes_classify_input_edit)
-        addButtonContainer = findViewById(R.id.activity_notes_classify_add_btn_container)
-        listContainer = findViewById(R.id.activity_notes_classify_list_container)
-
+        bindViews()
         setupTopBar()
         setupAction()
         renderCategoryList()
@@ -56,6 +51,15 @@ class NotesCategoryManageActivity : BaseActivity() {
         renderCategoryList()
     }
 
+    // 绑定分类管理页组件
+    private fun bindViews() {
+        topBar = findViewById(R.id.activity_notes_classify_topbar)
+        inputEdit = findViewById(R.id.activity_notes_classify_input_edit)
+        addButtonContainer = findViewById(R.id.activity_notes_classify_add_btn_container)
+        listContainer = findViewById(R.id.activity_notes_classify_list_container)
+    }
+
+    // 配置顶部返回和新增分类入口
     private fun setupTopBar() {
         topBar.clearTopBarLeftIcons()
         topBar.clearTopBarRightIcons()
@@ -69,16 +73,18 @@ class NotesCategoryManageActivity : BaseActivity() {
         }
     }
 
+    // 页面中的添加按钮与顶部按钮共用同一逻辑
     private fun setupAction() {
         addButtonContainer.setOnClickListener {
             addCategoryFromInput()
         }
     }
 
+    // 从输入框读取分类名并执行新增
     private fun addCategoryFromInput() {
         val name = inputEdit.text?.toString()?.trim().orEmpty()
         if (name.isBlank()) {
-            showShortToast(this,"分类名称不能为空")
+            showShortToast("分类名称不能为空")
             return
         }
 
@@ -86,12 +92,13 @@ class NotesCategoryManageActivity : BaseActivity() {
         if (success) {
             inputEdit.setText("")
             renderCategoryList()
-            showShortToast(this,"分类添加成功")
+            showShortToast("分类添加成功")
         } else {
-            showShortToast(this,"添加失败，可能是分类重复")
+            showShortToast("添加失败，可能是分类重复")
         }
     }
 
+    // 重新绘制当前用户的分类列表
     private fun renderCategoryList() {
         listContainer.removeAllViews()
         val categories = repository.getAllCategories(userId)
@@ -106,6 +113,7 @@ class NotesCategoryManageActivity : BaseActivity() {
         }
     }
 
+    // 生成单条分类卡片，附带重命名和删除操作
     private fun createCategoryItemView(category: NoteCategory): View {
         val card = MaterialCardView(this).apply {
             radius = 16.dp.toFloat()
@@ -161,7 +169,7 @@ class NotesCategoryManageActivity : BaseActivity() {
         return card
     }
 
-    /* Dialog: 显示重命名对话框 */
+    // 弹出重命名输入框并提交修改
     private fun showRenameDialog(category: NoteCategory) {
         lateinit var editView: TextInputEditText
 
@@ -174,9 +182,9 @@ class NotesCategoryManageActivity : BaseActivity() {
                 val success = repository.renameCategory(userId, category.id, newName)
                 if (success) {
                     renderCategoryList()
-                    showShortToast(this@NotesCategoryManageActivity,"修改成功")
+                    showShortToast("修改成功")
                 } else {
-                    showShortToast(this@NotesCategoryManageActivity,"修改失败，名称可能重复或为空")
+                    showShortToast("修改失败，名称可能重复或为空")
                 }
             }
             setNegativeButton("取消", null)
@@ -186,28 +194,24 @@ class NotesCategoryManageActivity : BaseActivity() {
         dialog.applyRoundedStyle()
     }
 
-    /* Dialog: 显示删除对话框*/
+    // 删除分类前先提示分类下仍有笔记时无法删除
     private fun showDeleteDialog(category: NoteCategory) {
-
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("删除分类")
-            .setMessage("确定删除“${category.name}”吗？\n若该分类下仍有笔记，将无法删除。")
-            .setPositiveButton("删除") { _, _ ->
+        showConfirmDialog(
+            title = "删除分类",
+            message = "确定删除“${category.name}”吗？\n若该分类下仍有笔记，将无法删除。",
+            positiveText = "删除"
+        ) {
                 val success = repository.deleteCategory(userId, category.id)
                 if (success) {
                     renderCategoryList()
-                    Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除成功")
                 } else {
-                    Toast.makeText(this, "删除失败：该分类下还有笔记", Toast.LENGTH_SHORT).show()
+                    showShortToast("删除失败：该分类下还有笔记")
                 }
             }
-            .setNegativeButton("取消", null)
-            .create()
-
-        dialog.applyRoundedStyle()
     }
 
+    // 分类为空时显示一条轻提示文案
     private fun createHintText(message: String): View {
         return TextView(this).apply {
             text = message
@@ -215,9 +219,5 @@ class NotesCategoryManageActivity : BaseActivity() {
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             setPadding(0, 8.dp, 0, 8.dp)
         }
-    }
-
-    private fun dp(value: Int): Int {
-        return (value * resources.displayMetrics.density + 0.5f).toInt()
     }
 }

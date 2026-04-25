@@ -17,6 +17,8 @@ class PlanRepository(context: Context) {
             put("title", plan.title)
             put("startDate", plan.startDate)
             put("endDate", plan.endDate)
+            put("startTime", plan.startTime)
+            put("endTime", plan.endTime)
             put("note", plan.note)
             put("isFinished", plan.isFinished)
         }
@@ -28,6 +30,8 @@ class PlanRepository(context: Context) {
             put("title", plan.title)
             put("startDate", plan.startDate)
             put("endDate", plan.endDate)
+            put("startTime", plan.startTime)
+            put("endTime", plan.endTime)
             put("note", plan.note)
             put("isFinished", plan.isFinished)
         }
@@ -55,7 +59,9 @@ class PlanRepository(context: Context) {
                     title = cursor.getString(cursor.getColumnIndexOrThrow("title")),
                     startDate = cursor.getString(cursor.getColumnIndexOrThrow("startDate")),
                     endDate = cursor.getString(cursor.getColumnIndexOrThrow("endDate")),
-                    note = cursor.getString(cursor.getColumnIndexOrThrow("note")),
+                    startTime = cursor.getString(cursor.getColumnIndexOrThrow("startTime")) ?: "",
+                    endTime = cursor.getString(cursor.getColumnIndexOrThrow("endTime")) ?: "",
+                    note = cursor.getString(cursor.getColumnIndexOrThrow("note")) ?: "",
                     isFinished = cursor.getInt(cursor.getColumnIndexOrThrow("isFinished"))
                 )
             )
@@ -79,7 +85,9 @@ class PlanRepository(context: Context) {
                 title = cursor.getString(cursor.getColumnIndexOrThrow("title")),
                 startDate = cursor.getString(cursor.getColumnIndexOrThrow("startDate")),
                 endDate = cursor.getString(cursor.getColumnIndexOrThrow("endDate")),
-                note = cursor.getString(cursor.getColumnIndexOrThrow("note")),
+                startTime = cursor.getString(cursor.getColumnIndexOrThrow("startTime")) ?: "",
+                endTime = cursor.getString(cursor.getColumnIndexOrThrow("endTime")) ?: "",
+                note = cursor.getString(cursor.getColumnIndexOrThrow("note")) ?: "",
                 isFinished = cursor.getInt(cursor.getColumnIndexOrThrow("isFinished"))
             )
         } else {
@@ -194,15 +202,57 @@ class PlanRepository(context: Context) {
         return result
     }
 
-    fun getEarliestStartDate(userId: Long): String? {
+    fun syncKeepDays(userId: Long, date: String, shouldCount: Boolean): Int {
+        val db = dbHelper.writableDatabase
+        val counted = isKeepDayRecorded(userId, date)
+
+        when {
+            shouldCount && !counted -> {
+                val values = ContentValues().apply {
+                    put("userId", userId)
+                    put("recordDate", date)
+                }
+                db.insertWithOnConflict(
+                    "plan_keep_day_record",
+                    null,
+                    values,
+                    SQLiteDatabase.CONFLICT_IGNORE
+                )
+            }
+
+            !shouldCount && counted -> {
+                db.delete(
+                    "plan_keep_day_record",
+                    "userId=? AND recordDate=?",
+                    arrayOf(userId.toString(), date)
+                )
+            }
+        }
+
+        return getKeepDaysCount(userId)
+    }
+
+    fun getKeepDaysCount(userId: Long): Int {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
-            "SELECT MIN(startDate) FROM study_plan WHERE userId=?",
+            "SELECT COUNT(*) FROM plan_keep_day_record WHERE userId=?",
             arrayOf(userId.toString())
         )
 
-        val result = if (cursor.moveToFirst()) cursor.getString(0) else null
+        val result = if (cursor.moveToFirst()) cursor.getInt(0) else 0
         cursor.close()
         return result
+    }
+
+    private fun isKeepDayRecorded(userId: Long, date: String): Boolean {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT 1 FROM plan_keep_day_record WHERE userId=? AND recordDate=? LIMIT 1",
+            arrayOf(userId.toString(), date)
+        )
+
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        return exists
     }
 }

@@ -18,9 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.ui.fragment.main_activity.AiMessageAdapter
 import com.example.xiaomingassistant.ui.view.TopBarWithScrollView
+import com.example.xiaomingassistant.util.calc.dp
+import com.example.xiaomingassistant.util.dialog.showConfirmDialog
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 class AiFragment : Fragment(R.layout.main_interface_ai) {
 
@@ -37,12 +38,7 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        topBar = view.findViewById(R.id.ai_content_container)
-        recyclerView = view.findViewById(R.id.ai_message_list)
-        inputEdit = view.findViewById(R.id.ai_input)
-        sendButton = view.findViewById(R.id.ai_send_btn)
-        inputBar = view.findViewById(R.id.input_bar)
-
+        bindViews(view)
         setupTopBar()
         setupRecyclerView()
         setupInput()
@@ -50,6 +46,16 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
         observeUi()
     }
 
+    // 绑定 AI 对话页组件
+    private fun bindViews(view: View) {
+        topBar = view.findViewById(R.id.ai_content_container)
+        recyclerView = view.findViewById(R.id.ai_message_list)
+        inputEdit = view.findViewById(R.id.ai_input)
+        sendButton = view.findViewById(R.id.ai_send_btn)
+        inputBar = view.findViewById(R.id.input_bar)
+    }
+
+    // 顶栏提供清空当前会话入口
     private fun setupTopBar() {
         topBar.clearTopBarRightIcons()
         topBar.addTopBarRightIcon(R.drawable.garbage) {
@@ -57,36 +63,25 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
         }
     }
 
+    // 清空对话前弹出统一确认框
     private fun showClearConversationDialog() {
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("清空对话")
-            .setMessage("确定清空当前会话吗？清空后将删除当前上下文，且无法恢复。")
-            .setPositiveButton("清空") { _, _ ->
+        requireContext().showConfirmDialog(
+            title = "清空对话",
+            message = "确定清空当前会话吗？清空后将删除当前上下文，且无法恢复。",
+            positiveText = "清空"
+        ) {
                 viewModel.clearConversation()
             }
-            .setNegativeButton("取消", null)
-            .create()
-
-        styleDialog(dialog)
     }
 
-    private fun styleDialog(dialog: androidx.appcompat.app.AlertDialog) {
-        dialog.show()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_bg)
-
-        val textColor = requireContext().getColor(R.color.black)
-
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)?.setTextColor(textColor)
-    }
-
+    // 配置聊天消息列表
     private fun setupRecyclerView() {
         adapter = AiMessageAdapter(requireContext())
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
     }
 
+    // 发送按钮和回车键都复用同一套发送逻辑
     private fun setupInput() {
         sendButton.setOnClickListener {
             sendCurrentInput()
@@ -102,12 +97,11 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
         }
     }
 
+    // 根据键盘显隐动态调整输入栏底部间距
     private fun setupWindowInsets(rootView: View) {
-        val inputBar = rootView.findViewById<View>(R.id.input_bar)
-
         // 你手写底栏的固定高度：60dp
-        val bottomBarHeight = (60 * resources.displayMetrics.density).toInt()
-        val spaceBetween = (16 * resources.displayMetrics.density).toInt()
+        val bottomBarHeight = 60.dp
+        val spaceBetween = 16.dp
 
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
@@ -129,6 +123,7 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
         }
     }
 
+    // 发送前先过滤空白输入
     private fun sendCurrentInput() {
         val text = inputEdit.text?.toString().orEmpty()
         if (text.isBlank()) return
@@ -136,6 +131,7 @@ class AiFragment : Fragment(R.layout.main_interface_ai) {
         inputEdit.setText("")
     }
 
+    // 观察 ViewModel 消息流并自动滚动到底部
     private fun observeUi() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiMessages.collect { list ->

@@ -8,7 +8,7 @@ class PlanDatabaseHelper(context: Context) : SQLiteOpenHelper(
     context,
     "plan.db",
     null,
-    4
+    6
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -19,6 +19,7 @@ class PlanDatabaseHelper(context: Context) : SQLiteOpenHelper(
              * userId 用户ID
              * title 计划标题
              * startDate / endDate 起止日期
+             * startTime / endTime 当日时间点
              * isFinished 完成状态
              */
             """
@@ -28,6 +29,8 @@ class PlanDatabaseHelper(context: Context) : SQLiteOpenHelper(
                 title TEXT NOT NULL,
                 startDate TEXT NOT NULL,
                 endDate TEXT NOT NULL,
+                startTime TEXT NOT NULL DEFAULT '',
+                endTime TEXT NOT NULL DEFAULT '',
                 note TEXT,
                 isFinished INTEGER NOT NULL DEFAULT 0
             )
@@ -69,12 +72,38 @@ class PlanDatabaseHelper(context: Context) : SQLiteOpenHelper(
             )
             """.trimIndent()
         )
+
+        /**
+         * @param 坚持天数记录表
+         * userId 用户ID
+         * recordDate 当天日期
+         */
+        db.execSQL(
+            """
+            CREATE TABLE plan_keep_day_record (
+                userId INTEGER NOT NULL,
+                recordDate TEXT NOT NULL,
+                PRIMARY KEY(userId, recordDate)
+            )
+            """.trimIndent()
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS plan_daily_record")
-        db.execSQL("DROP TABLE IF EXISTS plan_stat")
-        db.execSQL("DROP TABLE IF EXISTS study_plan")
-        onCreate(db)
+        if (oldVersion < 5) {
+            db.execSQL("ALTER TABLE study_plan ADD COLUMN startTime TEXT NOT NULL DEFAULT ''")
+            db.execSQL("ALTER TABLE study_plan ADD COLUMN endTime TEXT NOT NULL DEFAULT ''")
+        }
+        if (oldVersion < 6) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS plan_keep_day_record (
+                    userId INTEGER NOT NULL,
+                    recordDate TEXT NOT NULL,
+                    PRIMARY KEY(userId, recordDate)
+                )
+                """.trimIndent()
+            )
+        }
     }
 }

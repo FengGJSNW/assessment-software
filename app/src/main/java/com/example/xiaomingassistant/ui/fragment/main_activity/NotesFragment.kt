@@ -17,6 +17,7 @@ import com.example.xiaomingassistant.data.model.NoteCategory
 import com.example.xiaomingassistant.data.model.NoteItem
 import com.example.xiaomingassistant.data.repository.NotesRepository
 import com.example.xiaomingassistant.data.session.SessionManager
+import com.example.xiaomingassistant.util.calc.dp
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
@@ -37,10 +38,19 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
         sessionManager = SessionManager(requireContext())
         currentUserId = sessionManager.getUserId()
 
+        bindViews(view)
+        setupListeners()
+    }
+
+    // 绑定笔记首页组件
+    private fun bindViews(view: View) {
         notesDisplay = view.findViewById(R.id.notes_display)
         addNoteButton = view.findViewById(R.id.notes_btn_add_note)
         manageCategoryButton = view.findViewById(R.id.notes_manage_category)
+    }
 
+    // 绑定新增笔记和分类管理入口
+    private fun setupListeners() {
         addNoteButton.setOnClickListener {
             startActivity(Intent(requireContext(), NotesEditActivity::class.java))
         }
@@ -55,6 +65,7 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
         renderNotes()
     }
 
+    // 按分类分组渲染笔记列表
     private fun renderNotes() {
         notesDisplay.removeAllViews()
 
@@ -73,25 +84,26 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
         }
     }
 
+    // 创建分类分组卡片
     private fun createCategoryCard(category: NoteCategory, notes: List<NoteItem>): View {
         val context = requireContext()
 
         val outerCard = MaterialCardView(context).apply {
-            radius = dp(24).toFloat()
-            strokeWidth = dp(2)
+            radius = 24.dp.toFloat()
+            strokeWidth = 2.dp
             strokeColor = ContextCompat.getColor(context, R.color.card_darkgreen)
             cardElevation = 0f
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                bottomMargin = dp(16)
+                bottomMargin = 16.dp
             }
         }
 
         val root = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(18), dp(18), dp(18), dp(18))
+            setPadding(18.dp, 18.dp, 18.dp, 18.dp)
         }
 
         val title = TextView(context).apply {
@@ -105,7 +117,7 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
             text = "共 ${notes.size} 条笔记"
             setTextColor(0xFF666666.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
-            setPadding(0, dp(4), 0, 0)
+            setPadding(0, 4.dp, 0, 0)
         }
 
         root.addView(title)
@@ -119,12 +131,13 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
         return outerCard
     }
 
+    // 创建单条笔记标题卡片
     private fun createNoteTitleCard(note: NoteItem): View {
         val context = requireContext()
 
         val card = MaterialCardView(context).apply {
-            radius = dp(18).toFloat()
-            strokeWidth = dp(2)
+            radius = 18.dp.toFloat()
+            strokeWidth = 2.dp
             strokeColor = 0xFFD8EBDD.toInt()
             cardElevation = 0f
             isClickable = true
@@ -133,7 +146,7 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                topMargin = dp(12)
+                topMargin = 12.dp
             }
             setOnClickListener {
                 val intent = Intent(requireContext(), NotesTakingActivity::class.java)
@@ -147,19 +160,20 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
             setTextColor(0xFF222222.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             setTypeface(typeface, Typeface.BOLD)
-            setPadding(dp(18), dp(18), dp(18), dp(18))
+            setPadding(18.dp, 18.dp, 18.dp, 18.dp)
         }
 
         card.addView(title)
         return card
     }
 
+    // 没有笔记时展示空状态卡片
     private fun createEmptyCard(titleText: String, message: String): View {
         val context = requireContext()
 
         val card = MaterialCardView(context).apply {
-            radius = dp(24).toFloat()
-            strokeWidth = dp(2)
+            radius = 24.dp.toFloat()
+            strokeWidth = 2.dp
             strokeColor = ContextCompat.getColor(context, R.color.card_darkgreen)
             cardElevation = 0f
             layoutParams = LinearLayout.LayoutParams(
@@ -170,7 +184,7 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
 
         val root = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(20), dp(20), dp(20), dp(20))
+            setPadding(20.dp, 20.dp, 20.dp, 20.dp)
         }
 
         val title = TextView(context).apply {
@@ -184,16 +198,12 @@ class NotesFragment : Fragment(R.layout.main_interface_notes) {
             text = message
             setTextColor(0xFF666666.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            setPadding(0, dp(8), 0, 0)
+            setPadding(0, 8.dp, 0, 0)
         }
 
         root.addView(title)
         root.addView(sub)
         card.addView(root)
         return card
-    }
-
-    private fun dp(value: Int): Int {
-        return (value * resources.displayMetrics.density + 0.5f).toInt()
     }
 }

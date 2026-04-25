@@ -13,16 +13,21 @@ import com.example.xiaomingassistant.R
 import com.example.xiaomingassistant.data.PlanRepository
 import com.example.xiaomingassistant.data.session.SessionManager
 import com.example.xiaomingassistant.ui.component.TaskDisplayCardView
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_END_TIME
+import com.example.xiaomingassistant.util.calc.DEFAULT_PLAN_START_TIME
+import com.example.xiaomingassistant.util.calc.formatPlanTimeLabel
+import com.example.xiaomingassistant.util.calc.normalizePlanTime
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
 class MainPlaningFragment : Fragment() {
 
-    private var taskContainer: LinearLayout? = null
-    private var planCountText: TextView? = null
+    private lateinit var taskContainer: LinearLayout
+    private lateinit var planCountText: TextView
+    private lateinit var addPlanButton: MaterialButton
 
-    private var cardLeft: MaterialCardView? = null
-    private var cardRight: MaterialCardView? = null
+    private lateinit var cardLeft: MaterialCardView
+    private lateinit var cardRight: MaterialCardView
 
     private lateinit var sessionManager: SessionManager
     private var userId: Long = -1L
@@ -41,35 +46,37 @@ class MainPlaningFragment : Fragment() {
         sessionManager = SessionManager(requireContext())
         userId = sessionManager.getUserId()
 
-        val addPlanButton = view.findViewById<MaterialButton>(R.id.skillstudy_edit_btn_add_plan)
-
-        taskContainer = view.findViewById(R.id.skillstudy_edit_task_list_container)
-        planCountText = view.findViewById(R.id.skillstudy_edit_plan_count)
-
-        cardLeft = view.findViewById(R.id.skillstudy_edit_card_left)
-        cardRight = view.findViewById(R.id.skillstudy_edit_card_right)
-
+        bindViews(view)
         setupTopCards()
-
-        addPlanButton.setOnClickListener {
-            (requireActivity() as PlanEditingActivity).showAddFragment()
-        }
-
+        setupListeners()
         renderPlans()
     }
 
+    // 绑定计划列表页组件
+    private fun bindViews(view: View) {
+        addPlanButton = view.findViewById(R.id.skillstudy_edit_btn_add_plan)
+        taskContainer = view.findViewById(R.id.skillstudy_edit_task_list_container)
+        planCountText = view.findViewById(R.id.skillstudy_edit_plan_count)
+        cardLeft = view.findViewById(R.id.skillstudy_edit_card_left)
+        cardRight = view.findViewById(R.id.skillstudy_edit_card_right)
+    }
+
+    // 绑定新增计划入口
+    private fun setupListeners() {
+        addPlanButton.setOnClickListener {
+            (requireActivity() as PlanEditingActivity).showAddFragment()
+        }
+    }
+
     private fun setupTopCards() {
-        val left = cardLeft ?: return
-        val right = cardRight ?: return
+        cardLeft.post {
+            val width = cardLeft.width
 
-        left.post {
-            val width = left.width
-
-            left.updateLayoutParams<LinearLayout.LayoutParams> {
+            cardLeft.updateLayoutParams<LinearLayout.LayoutParams> {
                 height = width
             }
 
-            right.updateLayoutParams<LinearLayout.LayoutParams> {
+            cardRight.updateLayoutParams<LinearLayout.LayoutParams> {
                 height = width
             }
         }
@@ -82,13 +89,12 @@ class MainPlaningFragment : Fragment() {
     }
 
     private fun renderPlans() {
-        val container = taskContainer ?: return
         val repo = PlanRepository(requireContext())
         val list = repo.getAll(userId)
 
-        planCountText?.text = list.size.toString()
+        planCountText.text = list.size.toString()
 
-        container.removeAllViews()
+        taskContainer.removeAllViews()
 
         for (plan in list) {
             val card = TaskDisplayCardView(requireContext())
@@ -97,8 +103,8 @@ class MainPlaningFragment : Fragment() {
                 pointColor = requireContext().getColor(R.color.sky_blue),
                 title = plan.title,
                 dateRange = "${plan.startDate} ~ ${plan.endDate}",
-                startTime = "开始 ${plan.startDate}",
-                endTime = "结束 ${plan.endDate}",
+                startTime = formatPlanTimeLabel("开始", normalizePlanTime(plan.startTime, DEFAULT_PLAN_START_TIME)),
+                endTime = formatPlanTimeLabel("结束", normalizePlanTime(plan.endTime, DEFAULT_PLAN_END_TIME)),
                 content = if (plan.note.isBlank()) "暂无备注" else plan.note
             )
 
@@ -106,15 +112,7 @@ class MainPlaningFragment : Fragment() {
                 (requireActivity() as PlanEditingActivity).showEditFragment(plan.id)
             }
 
-            container.addView(card)
+            taskContainer.addView(card)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        taskContainer = null
-        planCountText = null
-        cardLeft = null
-        cardRight = null
     }
 }

@@ -9,11 +9,11 @@ import com.google.android.material.textfield.TextInputEditText
 
 class RegisterActivity : BaseActivity() {
 
-    // 组件 lazy 绑定
-    private val passwordEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_password) }
-    private val confirmEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_comfirm_password) }
-    private val accountEdit by lazy { findViewById<TextInputEditText>(R.id.register_text_account) }
-    private val registerBtn by lazy { findViewById<MaterialButton>(R.id.account_btn_register) }
+    private lateinit var passwordEdit: TextInputEditText
+    private lateinit var confirmEdit: TextInputEditText
+    private lateinit var accountEdit: TextInputEditText
+    private lateinit var registerBtn: MaterialButton
+
     // 数据库
     private val userRepository by lazy { UserRepository(this) }
 
@@ -24,6 +24,20 @@ class RegisterActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.account_registration_interface)
 
+        bindViews()
+        setupListeners()
+    }
+
+    // 绑定注册页组件
+    private fun bindViews() {
+        passwordEdit = findViewById(R.id.register_text_password)
+        confirmEdit = findViewById(R.id.register_text_comfirm_password)
+        accountEdit = findViewById(R.id.register_text_account)
+        registerBtn = findViewById(R.id.account_btn_register)
+    }
+
+    // 绑定注册按钮事件
+    private fun setupListeners() {
         registerBtn.setOnClickListener {
             handleRegistration()
         }
@@ -36,15 +50,15 @@ class RegisterActivity : BaseActivity() {
 
         when {
             username.isEmpty() -> {
-                showShortToast(this, "用户名不能为空")
+                showShortToast("用户名不能为空")
                 return
             }
             password.isEmpty() -> {
-                showShortToast(this, "密码不能为空")
+                showShortToast("密码不能为空")
                 return
             }
             password != confirmPassword -> {
-                showShortToast(this, "两次输入的密码不一致")
+                showShortToast("两次输入的密码不一致")
                 return
             }
         }
@@ -59,7 +73,7 @@ class RegisterActivity : BaseActivity() {
             UserRepository.RegisterResult.UnknownError -> "注册失败"
         }
 
-        showShortToast(this, message)
+        showShortToast(message)
 
         if (result == UserRepository.RegisterResult.Success) {
             finish()
