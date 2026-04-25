@@ -71,6 +71,10 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/weather_forecast_card"
             android:layout_width="match_parent"
@@ -91,8 +95,8 @@
                     android:id="@+id/weather_forecast_blur"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:realtimeBlurRadius="@dimen/global_blur_radius"
-                    app:realtimeOverlayColor="@color/white_alpha20" />
+                    app:realtimeBlurRadius="5dp"
+                    app:realtimeOverlayColor="@color/white_alpha10" />
 
                 <LinearLayout
                     android:id="@+id/weather_forecast_list"
