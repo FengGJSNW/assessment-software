@@ -6,13 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="14dp">
+    android:paddingStart="20dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="14dp">
 
     <ImageView
         android:id="@+id/internal_icon"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/point"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,12 +24,13 @@
         android:id="@+id/internal_main_info_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="14dp"
         android:layout_marginEnd="12dp"
+        android:layout_marginTop="14dp"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/internal_icon"
         app:layout_constraintEnd_toStartOf="@id/internal_date_container"
-        app:layout_constraintTop_toTopOf="@id/internal_icon">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/internal_title"
@@ -39,6 +42,7 @@
             android:textColor="#222222"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:includeFontPadding="false"
             tools:text="高等数学错题整理" />
 
         <TextView
@@ -57,10 +61,11 @@
         android:id="@+id/internal_date_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:gravity="end"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/internal_main_info_container">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/internal_start_time"
@@ -68,26 +73,26 @@
             android:layout_height="wrap_content"
             android:textColor="#999999"
             android:textSize="12sp"
-            tools:text="开始 08:00" />
+            tools:text="开始 04/15" />
 
         <TextView
             android:id="@+id/internal_end_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:textColor="#999999"
             android:textSize="12sp"
-            tools:text="结束 18:00" />
+            tools:text="结束 04/20" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/internal_summary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginTop="12dp"
         android:ellipsize="end"
         android:maxLines="3"
+        android:lineSpacingExtra="2dp"
         android:textColor="#555555"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="@id/internal_main_info_container"
