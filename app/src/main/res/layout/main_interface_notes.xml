@@ -63,7 +63,7 @@
                             android:textSize="14sp"
                             app:backgroundTint="@color/card_darkgreen"
                             app:cornerRadius="14dp"
-                            app:icon="@drawable/icon_for_none"
+                            app:icon="@drawable/edit"
                             app:iconPadding="8dp" />
 
                         <Space
@@ -80,7 +80,7 @@
                             android:textColor="@color/card_darkgreen"
                             app:backgroundTint="@android:color/white"
                             app:cornerRadius="14dp"
-                            app:icon="@drawable/icon_for_none"
+                            app:icon="@drawable/edit"
                             app:iconPadding="8dp"
                             app:iconTint="@color/card_darkgreen"
                             app:strokeColor="@color/card_darkgreen"

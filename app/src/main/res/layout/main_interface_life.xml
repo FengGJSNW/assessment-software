@@ -33,7 +33,7 @@
                     android:id="@+id/life_card_weather"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:customImage="@drawable/icon_for_none"
+                    app:customImage="@drawable/sunny"
                     app:backgroundImage="@drawable/setting_background"
                     app:customMode="jump"
                     app:customText="跳转天气详情页面"

@@ -78,7 +78,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
-                android:src="@drawable/icon_for_none"
+                android:src="@drawable/send"
                 app:tint="@color/card_darkgreen" />
         </LinearLayout>
 
