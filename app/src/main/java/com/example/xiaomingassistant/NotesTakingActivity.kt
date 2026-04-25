@@ -84,7 +84,7 @@ class NotesTakingActivity : BaseActivity() {
             return
         }
 
-        topBar.setTitle(note.title)
+        topBar.setTitle("文章内容")
         titleText.text = note.title
         categoryText.text = "分类：${note.categoryName}"
         contentText.text = note.content

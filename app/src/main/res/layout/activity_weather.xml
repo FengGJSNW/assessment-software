@@ -73,7 +73,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="60dp"/>
+            android:layout_height="180dp"/>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/weather_forecast_card"
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingVertical="6dp"
+                    android:paddingVertical="0dp"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
