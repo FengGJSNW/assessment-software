@@ -41,6 +41,8 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
     private lateinit var repository: PlanRepository
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var emptyHintTv: TextView
+
     private var userId: Long = -1L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +72,7 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
 
         keepDaysText = view.findViewById(R.id.skillstudy_edit_right_top_card_tv_day_count)
         finishedCountText = view.findViewById(R.id.skillstudy_edit_right_top_card_tv_task_count)
+        emptyHintTv = view.findViewById(R.id.skillstudy_tv_empty_hint)
     }
 
     // 让左侧方卡和右侧两张小卡保持成套比例
@@ -112,8 +115,9 @@ class SkillStudyFragment : Fragment(R.layout.main_interface_skillstudy) {
         cardDisplayTask.removeAllViews()
 
         if (list.isEmpty()) {
-            cardDisplayTask.addView(createHintCard("今日暂无日期区间内的计划"))
-            return
+            emptyHintTv.visibility = View.VISIBLE        // 显示“暂无计划”提示
+        } else {
+            emptyHintTv.visibility = View.GONE           // 隐藏提示文字
         }
 
         for (plan in list) {

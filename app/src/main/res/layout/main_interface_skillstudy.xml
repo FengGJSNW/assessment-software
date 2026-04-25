@@ -17,326 +17,337 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/skillstudy_card_top_left"
+                    android:layout_width="0dp"
+                    android:layout_height="240dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/card_darkgreen"
+                    app:strokeWidth="3dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:alpha="0.3"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/desk" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:text="编辑计划"
+                            android:textColor="#333333"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_icon_large"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/plan"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:tint="@color/card_darkgreen" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/skillstudy_card_top_right_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginBottom="6dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/card_darkgreen"
+                        app:strokeWidth="3dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alpha="0.2"
+                            android:contentDescription="@null"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/dog" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="12dp">
+
+                            <TextView
+                                android:id="@+id/tv_day_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="你已经坚持"
+                                android:textColor="#666666"
+                                android:textSize="12sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/skillstudy_edit_right_top_card_tv_day_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/harmonyos_sans_bold"
+                                android:includeFontPadding="false"
+                                android:text="99999"
+                                android:textColor="#333333"
+                                android:textSize="28sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tv_day_title" />
+
+                            <TextView
+                                android:id="@+id/skillstudy_edit_right_top_card_day"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginBottom="4dp"
+                                android:includeFontPadding="false"
+                                android:text="天"
+                                android:textColor="#333333"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_day_count"
+                                app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_day_count" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/skillstudy_card_top_right_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/card_darkgreen"
+                        app:strokeWidth="3dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alpha="0.2"
+                            android:contentDescription="@null"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/dog2" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="12dp">
+
+                            <TextView
+                                android:id="@+id/tv_task_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="你已经完成任务"
+                                android:textColor="#666666"
+                                android:textSize="12sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/skillstudy_edit_right_top_card_tv_task_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/harmonyos_sans_bold"
+                                android:includeFontPadding="false"
+                                android:text="99999"
+                                android:textColor="#333333"
+                                android:textSize="28sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tv_task_title" />
+
+                            <TextView
+                                android:id="@+id/skillstudy_edit_right_top_card_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginBottom="4dp"
+                                android:includeFontPadding="false"
+                                android:text="个"
+                                android:textColor="#333333"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_task_count"
+                                app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_task_count" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/skillstudy_card_top_left"
-                android:layout_width="0dp"
-                android:layout_height="240dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/skillstudy_card_show_information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/card_darkgreen"
                 app:strokeWidth="3dp">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:alpha="0.3"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/desk" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="20dp"
-                        android:text="编辑计划"
-                        android:textColor="#333333"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:id="@+id/iv_icon_large"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-
-                        android:src="@drawable/plan"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:tint="@color/card_darkgreen" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/skillstudy_card_top_right_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="6dp"
-                    android:layout_weight="1"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/card_darkgreen"
-                    app:strokeWidth="3dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0.2"
-                        android:contentDescription="@null"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/dog" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="12dp">
-
-                        <TextView
-                            android:id="@+id/tv_day_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="你已经坚持"
-                            android:textColor="#666666"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/skillstudy_edit_right_top_card_tv_day_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:fontFamily="@font/harmonyos_sans_bold"
-                            android:includeFontPadding="false"
-                            android:text="99999"
-                            android:textColor="#333333"
-                            android:textSize="28sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tv_day_title" />
-
-                        <TextView
-                            android:id="@+id/skillstudy_edit_right_top_card_day"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_marginBottom="4dp"
-                            android:includeFontPadding="false"
-                            android:text="天"
-                            android:textColor="#333333"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_day_count"
-                            app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_day_count" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/skillstudy_card_top_right_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_weight="1"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/card_darkgreen"
-                    app:strokeWidth="3dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0.2"
-                        android:contentDescription="@null"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/dog2" />
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="12dp">
-
-                        <TextView
-                            android:id="@+id/tv_day_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="你已经完成任务"
-                            android:textColor="#666666"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/skillstudy_edit_right_top_card_tv_task_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:fontFamily="@font/harmonyos_sans_bold"
-                            android:includeFontPadding="false"
-                            android:text="99999"
-                            android:textColor="#333333"
-                            android:textSize="28sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tv_day_title" />
-
-                        <TextView
-                            android:id="@+id/skillstudy_edit_right_top_card_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_marginBottom="4dp"
-                            android:includeFontPadding="false"
-                            android:text="个"
-                            android:textColor="#333333"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="@id/skillstudy_edit_right_top_card_tv_task_count"
-                            app:layout_constraintStart_toEndOf="@id/skillstudy_edit_right_top_card_tv_task_count" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/skillstudy_card_show_information"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:padding="20dp"
-                        android:text="今日计划"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingEnd="16dp"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="20dp"
+                            android:text="今日计划"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:paddingEnd="16dp">
 
-                            <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:background="@drawable/point"
-                                android:backgroundTint="@color/point_red" />
-
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="进行中"
-                                android:textSize="11sp"
-                                android:textColor="#666666"
-                                tools:ignore="HardcodedText" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                        </LinearLayout>
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/point"
+                                    android:backgroundTint="@color/point_red" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:text="进行中"
+                                    android:textColor="#666666"
+                                    android:textSize="11sp"
+                                    tools:ignore="HardcodedText" />
 
-                            <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:background="@drawable/point"
-                                android:backgroundTint="@color/point_yellow" />
+                            </LinearLayout>
 
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="未到点"
-                                android:textSize="11sp"
-                                android:textColor="#666666"
-                                tools:ignore="HardcodedText" />
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                        </LinearLayout>
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/point"
+                                    android:backgroundTint="@color/point_yellow" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:text="未到点"
+                                    android:textColor="#666666"
+                                    android:textSize="11sp"
+                                    tools:ignore="HardcodedText" />
 
-                            <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:background="@drawable/point"
-                                android:backgroundTint="@color/point_green" />
+                            </LinearLayout>
 
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="已完成"
-                                android:textSize="11sp"
-                                android:textColor="#666666"
-                                tools:ignore="HardcodedText" />
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/point"
+                                    android:backgroundTint="@color/point_green" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:text="已完成"
+                                    android:textColor="#666666"
+                                    android:textSize="11sp"
+                                    tools:ignore="HardcodedText" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/skillstudy_task_list_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="20dp" />
+
+                    <TextView
+                        android:id="@+id/skillstudy_tv_empty_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="center"
+                        android:text="今日暂无日期区间内的计划"
+                        android:textColor="#AAAAAA"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/skillstudy_task_list_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="20dp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 
