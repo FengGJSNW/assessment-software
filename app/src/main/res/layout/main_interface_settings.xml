@@ -144,23 +144,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/card_darkgreen"
-            app:strokeWidth="3dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1000dp"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
 
     </com.example.xiaomingassistant.ui.view.TopBarWithScrollView>
 

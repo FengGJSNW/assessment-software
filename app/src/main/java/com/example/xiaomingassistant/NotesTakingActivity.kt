@@ -70,7 +70,7 @@ class NotesTakingActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        topBar.addTopBarRightIcon(R.drawable.delete) {
+        topBar.addTopBarRightIcon(R.drawable.garbage) {
             showDeleteDialog()
         }
     }

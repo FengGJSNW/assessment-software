@@ -67,7 +67,7 @@ class NotesEditActivity : BaseActivity() {
         }
 
         if (editingNoteId > 0) {
-            topBar.addTopBarRightIcon(R.drawable.delete) {
+            topBar.addTopBarRightIcon(R.drawable.garbage) {
                 showDeleteDialog()
             }
         }

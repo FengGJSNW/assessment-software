@@ -27,6 +27,7 @@
 
     <!--    字体-->
     <color name="text_blue">#3787FD</color>
+    <color name="text_silver">#AAAAAA</color>
 
 
     <!-- 底栏 -->

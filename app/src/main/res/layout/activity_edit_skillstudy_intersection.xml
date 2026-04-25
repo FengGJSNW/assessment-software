@@ -38,7 +38,7 @@
                         android:id="@+id/skillstudy_edit_left_card_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="计划编辑器"
+                        android:text="计划添加器"
                         android:textColor="#222222"
                         android:textSize="22sp"
                         android:textStyle="bold"
@@ -50,7 +50,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="开始编辑你的计划吧"
+                        android:text="开始添加你的计划吧"
                         android:textColor="#666666"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -146,12 +146,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="20dp"
                     android:text="计划列表"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:ignore="HardcodedText" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="5dp"
+                    android:text="可以在这里点击卡片重新进入编辑界面哦"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_silver"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
 
                 <LinearLayout
                     android:id="@+id/skillstudy_edit_task_list_container"
